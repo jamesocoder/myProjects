@@ -4,6 +4,14 @@ Implements a server-client architecture for passing messages and/or commands bet
 # Motivation
 Having freshly graduated, I wanted to start a project that would help me maintain the skills I learned throughout my education.  I chose the task of networking from scratch because I found it to be a good challenge that pushed me out of my usual area of expertise.  I'd also like to see how the choice of programming language hampers the ease of creating a network.
 
-# To-Do's
-- [ ] Set up directories
-- [ ] Program solution in C
+# Current Goals
+Write minimum program in every language that supports it:
+- Determine if language is capable of networking
+- Set up server to listen to messages
+- Pass message from client and print on server's console
+
+- [ ] C
+- [ ] D
+- [ ] Java
+- [ ] Python
+- [ ] C++
