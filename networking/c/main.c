@@ -1,5 +1,10 @@
 #include <stdio.h>
+#include "server.c"
+#include "client.c"
 
 void main() {
-    printf("Hello world!");
+    printf("\n~~~ Starting C Progam ~~~\n");
+    makeServer();
+    makeClient();
+    printf("\n");
 }
