@@ -3,7 +3,10 @@
 #include "client.c"
 
 void main() {
-    printf("\n~~~ Starting C Progam ~~~\n");
+    const unsigned char BUFF_LEN = 255;
+    const unsigned short PORT = 1200;
+
+    printf("\n~~~ Starting C Progam ~~~%d\n", BUFF_LEN);
     makeServer();
     makeClient();
     printf("\n");
