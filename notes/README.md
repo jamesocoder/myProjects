@@ -12,3 +12,8 @@
     - Notes about C data type peculiarities
 * [main()](0002.md)
     - A refresher on how C takes in arguments from the command line
+
+## Miscellaneous
+* POSIX and UNIX
+    - POSIX stands for Portable Operating System Interface.  It is a set of standard specifications that an OS can be "certified" against, meaning it meets those minimum standards of functionality.
+    - UNIX stands for UNiplexed Information Computing System.  It is a historical OS that many modern OS's have improved upon.  Modern OS's are typically "capable of running UNIX programs".
