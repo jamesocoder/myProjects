@@ -1,3 +1,7 @@
+/* Following this tutorial:
+https://learn.microsoft.com/en-us/windows/win32/winsock/getting-started-with-winsock
+*/
+
 #include <stdio.h>
 #include "server.c"
 #include "client.c"
