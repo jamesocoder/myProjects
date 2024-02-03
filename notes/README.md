@@ -13,6 +13,8 @@
 * [Preprocessor Directives](0001.md)
     - A refresher on how to combine code written in different files in C using #import
     - Also provides a reference to other #keywords like #define for declaring global constants in a file
+* [Linking libraries during compilation](0005.md)
+    - Library files are different from header files and need to be handled differently
 * [Data types](0003.md)
     - Notes about C data type peculiarities
 * [main()](0002.md)
