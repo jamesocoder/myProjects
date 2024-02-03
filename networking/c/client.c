@@ -2,5 +2,5 @@
 
 void makeClient(int bufferLength, unsigned short portNumber) {
     printf("TODO: Setup client\n");
-    printf("%d %d", bufferLength, portNumber);
+    printf("\t- %d %d\n", bufferLength, portNumber);
 }

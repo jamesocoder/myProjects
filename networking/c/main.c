@@ -3,6 +3,10 @@ https://learn.microsoft.com/en-us/windows/win32/winsock/getting-started-with-win
 */
 
 #include <stdio.h>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#pragma comment(lib, "Ws2_32.lib")
+
 #include "server.c"
 #include "client.c"
 
