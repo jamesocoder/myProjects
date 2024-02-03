@@ -5,6 +5,8 @@
 ## VSCode
 * [Configurations](0000.md)
     - An exploration of the files found in the .vscode directory
+* [Git branch management](0006.md)
+    - How to clean up VSCode's source control after a branch is merged
 
 ## C Language
 * [make.exe for VSCode/Windows Powershell](0004.md)
