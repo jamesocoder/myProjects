@@ -5,8 +5,8 @@ These examples copied from https://github.com/spotify/web-api-examples/tree/mast
 ## Contents
 
 - Authorization examples
-    - [Authorization Code]( /authorization/authorization_code/)
-    - [Authorization Code with PKCE extension]( /authorization/authorization_code_pkce/)
-    - [Client Credentials](/authorization/client_credentials)
-    - [Implicit Grant](/authorization/implicit_grant/)
-- [Get User Profile example](/get_user_profile/)
+    - [Authorization Code]( /spotifyApi/web-api-examples/authorization/authorization_code/)
+    - [Authorization Code with PKCE extension]( /spotifyApi/web-api-examples/authorization/authorization_code_pkce/)
+    - [Client Credentials](/spotifyApi/web-api-examples/authorization/client_credentials)
+    - [Implicit Grant](/spotifyApi/web-api-examples/authorization/implicit_grant/)
+- [Get User Profile example](/spotifyApi/web-api-examples/get_user_profile/)
