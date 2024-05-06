@@ -8,7 +8,9 @@
  */
 
 const clientId = '9eba280735134f158298f579624db313'; // your clientId
-const redirectUrl = 'http://localhost:8080/404.html';        // your redirect URL - must be localhost URL and/or HTTPS
+// your redirect URL - must be localhost URL and/or HTTPS and it 
+// must match what's listed in your Spotify for Developers App's settings
+const redirectUrl = 'http://localhost:8080/404.html'; 
 
 const authorizationEndpoint = "https://accounts.spotify.com/authorize";
 const tokenEndpoint = "https://accounts.spotify.com/api/token";
@@ -47,7 +49,7 @@ if (code) {
   url.searchParams.delete("code");
 
   const updatedUrl = url.search ? url.href : url.href.replace('?', '');
-  window.history.replaceState({}, document.title, updatedUrl);
+  window.history.replaceState(null, "", updatedUrl);
 }
 
 // If we have a token, we're logged in, so fetch user data and render logged in template
