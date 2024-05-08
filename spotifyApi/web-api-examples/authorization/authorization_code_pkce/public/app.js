@@ -10,7 +10,7 @@
 const clientId = '9eba280735134f158298f579624db313'; // your clientId
 // your redirect URL - must be localhost URL and/or HTTPS and it 
 // must match what's listed in your Spotify for Developers App's settings
-const redirectUrl = 'http://localhost:8080/404.html'; 
+const redirectUrl = 'http://localhost:8080'; 
 
 const authorizationEndpoint = "https://accounts.spotify.com/authorize";
 const tokenEndpoint = "https://accounts.spotify.com/api/token";
@@ -93,7 +93,7 @@ async function redirectToSpotifyAuthorize() {
   window.location.href = authUrl.toString(); // Redirect the user to the authorization server for login
 }
 
-// Soptify API Calls
+// Spotify API Calls
 async function getToken(code) {
   const code_verifier = localStorage.getItem('code_verifier');
 
