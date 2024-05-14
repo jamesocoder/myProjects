@@ -1,16 +1,11 @@
 # Spotify Authorization Code with PKCE example
 
 This app displays your Spotify profile information using [Authorization Code with PKCE](https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow)
-to grant permissions to the app.
-
-## Using your own credentials
-
-You will need to register your app and get your own credentials from the [Spotify for Developers Dashboard](https://developer.spotify.com/dashboard).
-
-- Create a new app in the dashboard and add `http://localhost:8080` to the app's redirect URL list.
-- Once you have created your app, update the `client_id` and `redirect_uri` in the `public/app.js` file with the values obtained from the app settings in the dashboard.
+to grant permissions to the app.  It may require you to log in and out 1 or 2 times before your data begins to display.
 
 ## Running the example
+
+Contact me and request to be added as an authorized user to the Spotify API App this example requests authorization through (PersonalProject001).
 
 From a console shell:
 
