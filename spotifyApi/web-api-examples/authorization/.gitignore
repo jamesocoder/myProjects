@@ -1,1 +1,4 @@
 node_modules/
+.env
+authorization_code_pkce/package-lock.json
+authorization_code_pkce/yarn.lock
