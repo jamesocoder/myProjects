@@ -7,7 +7,7 @@
  * https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow
  */
 
-const clientId = '9eba280735134f158298f579624db313'; // your clientId
+const clientId = '0e068ea58a3744a3a641c8c3b375d6f9'; // your clientId
 // your redirect URL - must be localhost URL and/or HTTPS and it 
 // must match what's listed in your Spotify for Developers App's settings
 const redirectUrl = 'http://localhost:8080'; 
