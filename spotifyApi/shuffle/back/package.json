@@ -1,0 +1,16 @@
+{
+  "name": "shuffle_server",
+  "version": "0.0.1",
+  "main": "server.js",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "James Ouk",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
