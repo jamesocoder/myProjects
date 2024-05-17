@@ -1,8 +1,8 @@
-const test = function (message: string): HTMLHeadingElement {
+const test = function (...message: string[]): HTMLHeadingElement {
     let heading = document.createElement('h1');
-    heading.textContent = message;
+    heading.textContent = message.join(' ');
 
     return heading;
 }
 
-document.body.appendChild(test('Za Warudo'));
+document.body.appendChild(test('Za Warudo', 'Ist', 'Big'));

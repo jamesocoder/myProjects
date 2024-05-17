@@ -2,7 +2,7 @@ The goal of this folder is to document my progress learning TypeScript.  I plan 
 
 # Current Commit Explanation
 
-Here, I have an example of a function declaration and its use.
+Here, I have an example of a rest parameter.
 
 # How To Run
 
