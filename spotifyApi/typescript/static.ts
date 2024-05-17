@@ -1,17 +1,21 @@
 class Thing {
-    private static prop: string = "val01";
+    private static _prop: string = "val01";
 
     constructor(private name: string) {
         this.name = name;
     }
 
-    changeStatic(val: string) {
-        Thing.prop = val;
-        console.log(this.name + " changed static variable to " + Thing.prop);
+    get prop() {
+        return Thing._prop;
+    }
+
+    set prop(val: string) {
+        Thing._prop = val;
+        console.log(this.name + " changed static variable to " + this.prop);
     }
 
     checkStatic() {
-        console.log(this.name + " sees static value: " + Thing.prop);
+        console.log(this.name + " sees static value: " + this.prop);
     }
 
     public static useStaticMethod() {
@@ -33,7 +37,7 @@ const printStatus = () => {
 
 console.log();
 printStatus();
-thing1.changeStatic("val02");
+thing1.prop = "val02";
 printStatus();
 
 Thing.useStaticMethod();
