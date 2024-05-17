@@ -2,12 +2,14 @@ The goal of this folder is to document my progress learning TypeScript.  I plan 
 
 # Current Commit Explanation
 
-Here, I have an example of a rest parameter.
+This commit experiments with static class properties and methods.
+
+Note how the only thing special about static class methods is that they allow you to use them without instantiating the class.
 
 # How To Run
 
-1. Transpile app.ts using tsc (TypeScript Compiler).  tsc will output a .js file
-2. Use whatever method you prefer to serve the .js file and view it in a browser
+1. Transpile static.ts using tsc (TypeScript Compiler).  tsc will output a .js file
+2. Run the .js file with the terminal command "node ___.js"
 
 # notes.pdf
 
