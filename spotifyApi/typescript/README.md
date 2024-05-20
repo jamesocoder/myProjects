@@ -2,15 +2,15 @@ The goal of this folder is to document my progress learning TypeScript.  I plan 
 
 # Current Commit Explanation
 
-This commit allowed me to practice using a favorite concept of mine: polymorphism.  I really enjoyed playing with classes in my Java-based Object Oriented Programming class, and I'm excited to see that it's possible in TypeScript.
+This commit is meant to be explored in VS Code.  It's meant to show the limits of a basic TS interface.
 
 # How To Run
 
 With ts-node installed (`npm install -g ts-node`), use terminal command:<br>
-`ts-node classes.ts`
+`ts-node interfaces.ts`
 
 Without ts-node:
-1. Transpile classes.ts using tsc (TypeScript Compiler).  tsc will output a .js file
+1. Transpile interfaces.ts using tsc (TypeScript Compiler).  tsc will output a .js file
 2. Run the .js file with the terminal command `node ___.js`
 
 # notes.pdf
