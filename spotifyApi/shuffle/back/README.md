@@ -4,7 +4,7 @@ Required modules:
 - Node.js & npm (Node Package Manager)
     - Use Google to find the right installer,<br>which is typically nvm (Node Version Manager)
 - TypeScript
-    - `npm install -g typescript"
+    - `npm install -g typescript`
 
 Steps:
 
@@ -16,7 +16,7 @@ Steps:
         - It can be run with `yarn install`
 3. Create a .env file in the root directory
     - Add "CLIENT_ID=" + any random string to it
-    - The text inside should look like: CLIENT_ID=a209d8e4f
+    - The text inside should look like: `CLIENT_ID=a209d8e4f`
 4. Use the terminal command `tsc`
     - This will create a build folder
 5. Run the built files with `node ./build/_____.js`
