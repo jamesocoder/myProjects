@@ -8,7 +8,7 @@ abstract class StaticVal {
     protected set value(newValue: number) {
         StaticVal._value = newValue;
         /* We will expect the concrete class to print a customized notification
-        whenever this is invoked in their override of this method.*/
+        whenever this is invoked.*/
     }
 
     abstract checkStatic(): void
