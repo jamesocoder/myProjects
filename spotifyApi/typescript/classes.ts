@@ -1,45 +1,69 @@
-class Thing {
-    private static _prop: string = "val01";
+abstract class StaticVal {
+    private static _value: number = 1;
 
-    constructor(private name: string) {
-        this.name = name;
+    protected get value(): number {
+        return StaticVal._value;
+    }
+    
+    protected set value(newValue: number) {
+        StaticVal._value = newValue;
+        /* We will expect the concrete class to print a customized notification
+        whenever this is invoked in their override of this method.*/
     }
 
-    get prop() {
-        return Thing._prop;
-    }
+    abstract checkStatic(): void
 
-    set prop(val: string) {
-        Thing._prop = val;
-        console.log(this.name + " changed static variable to " + this.prop);
+    abstract doAction(): void
+}
+
+class Incrementor extends StaticVal {
+    constructor() {
+        super();
     }
 
     checkStatic() {
-        console.log(this.name + " sees static value: " + this.prop);
+        console.log("Incrementor sees static value of " + super.value);
     }
 
-    public static useStaticMethod() {
-        let val: number = 0;
-        console.log("Value in static method is " + val);
-        val++;
-        console.log("Attempted to increment value in method");
+    doAction() {
+        super.value++;
+        console.log("Incrementor increased static value.");
     }
 }
 
-const thing1: Thing = new Thing("Thing1"),
-    thing2: Thing = new Thing("Thing2");
+class Decrementor extends StaticVal{
+    constructor() {
+        super();
+    }
 
-const printStatus = () => {
-    thing1.checkStatic();
-    thing2.checkStatic();
+    checkStatic(): void {
+        console.log("Decrementor sees static value of " + super.value);
+    }
+
+    doAction(): void {
+        super.value--;
+        console.log("Decrementor decreased static value.");
+    }
+}
+
+
+// Demonstrating polymorphism with the above class family
+const printStatus = (staticOperators: StaticVal[]) => {
+    staticOperators.forEach(thing => {
+        thing.checkStatic();
+    });
     console.log();
 }
 
-console.log();
-printStatus();
-thing1.prop = "val02";
-printStatus();
+const doAllActions = (staticOperators: StaticVal[]) => {
+    staticOperators.forEach(thing => {
+        thing.doAction();
+        printStatus(staticOperators);
+    });
+}
 
-Thing.useStaticMethod();
-Thing.useStaticMethod();
+const things: StaticVal[] = [new Incrementor(), new Decrementor()];
+
 console.log();
+printStatus(things);
+doAllActions(things);
