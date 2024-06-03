@@ -15,7 +15,15 @@ import dotenv from 'dotenv';
     enforcement through some compiler setting, but then why even
     use TS at that point? */
 type Environment = {
+    // Spotify Developer's App ID
     CLIENT_ID?: string
+
+    // For enabling Express's debug output
+    DEBUG?: string
+
+    /* For setting the app into production mode which disables
+    Express's stack trace printing on error */
+    NODE_ENV?: string
 }
 
 async function main(): Promise<void> {
