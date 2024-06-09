@@ -26,9 +26,8 @@ async function run(): Promise<void> {
 
     const server = app.listen(process.env.PORT, () => {
       const address = server.address() as AddressInfo;
-      const deplyd: boolean = process.env.DEPLOYED as boolean == true;
-      let host = deplyd ? address.address : 'localhost';
-
+      const deplyd = process.env.DEPLOYED as boolean == true;
+      const host = deplyd ? address.address : 'localhost';
       console.log(
         `\nServer listening...\n` +
         `${deplyd ? 'https' : 'http'}://${host}\:${process.env.PORT}\n\n` +
