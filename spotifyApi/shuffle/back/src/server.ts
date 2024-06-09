@@ -24,17 +24,17 @@ async function run(): Promise<void> {
 
     app.use(setRoutes());
 
-    /* TODO: The localhost URL won't be applicable once this app is
-    deployed.  Should delete this as well as modify the printout on
-    deployment. */
     const server = app.listen(process.env.PORT, () => {
       const address = server.address() as AddressInfo;
-      let host = process.env.DEPLOYED as boolean == true ? address.address : 'localhost';
+      const deplyd: boolean = process.env.DEPLOYED as boolean == true;
+      let host = deplyd ? address.address : 'localhost';
 
-      console.log(`\nServer listening...\nhttp://${host}\:${process.env.PORT}\n
-        Client ID: ${process.env.CLIENT_ID}
-        Node Env: ${process.env.NODE_ENV}
-        Debug: ${process.env.DEBUG}\n`
+      console.log(
+        `\nServer listening...\n` +
+        `${deplyd ? 'https' : 'http'}://${host}\:${process.env.PORT}\n\n` +
+        `Client ID: ${process.env.CLIENT_ID}\n` +
+        `Node Env: ${process.env.NODE_ENV}\n` +
+        `Debug: ${process.env.DEBUG}\n`
       );
     });
 }
