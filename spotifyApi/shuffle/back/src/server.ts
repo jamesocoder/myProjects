@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-//import express from 'express';
+import express from 'express';
 
 /* Adding type safety to this project causes some inconvenience
 - dotenv can't be loaded into its default process.env because
@@ -26,13 +26,22 @@ type Environment = {
     NODE_ENV?: string
 }
 
-async function main(): Promise<void> {
-    let env: Environment = {};
-    let result = dotenv.config({
-        processEnv: env
-    });
-    if ('error' in result) {throw result.error;}
+const setEnv = (): Environment => {
+  let env: Environment = {};
+  let result = dotenv.config({
+    processEnv: env
+  });
+  if ('error' in result) {throw result.error;} else return env;
+}
+
+const setRoutes = (): express.Router => {
+  const router = express.Router();
+  return router;
+}
+
+async function run(): Promise<void> {
+    const env: Environment = setEnv();
     console.log(env.CLIENT_ID);
 }
 
-main().catch(console.error);
+run().catch(console.error);
