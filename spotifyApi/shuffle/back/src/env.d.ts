@@ -14,6 +14,11 @@ values prior to launching the program in the terminal. */
 declare global {
     namespace NodeJS {
         interface ProcessEnv {
+            /* Equals 1 or 0, which will be converted to a
+            boolean at runtime.  Tells code whether to
+            expect a real host or the localhost. */
+            DEPLOYED: boolean
+
             PORT: number
 
             // Spotify Developer's App ID
