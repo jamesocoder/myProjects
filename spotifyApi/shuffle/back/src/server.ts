@@ -20,15 +20,14 @@ async function run(): Promise<void> {
     setEnv();
 
     const app: express.Application = express();
-    /* TODO: This localhost URL won't be applicable once this app is
-    deployed.  Should delete this as well as modify the printout on
-    deployment. */
-    const SERVER_URL: string = `http://localhost:${process.env.PORT}`;
 
     app.use(setRoutes());
 
+    /* TODO: The localhost URL won't be applicable once this app is
+    deployed.  Should delete this as well as modify the printout on
+    deployment. */
     app.listen(process.env.PORT, () => {
-      console.log(`\nServer listening...\n${SERVER_URL}\n
+      console.log(`\nServer listening...\nhttp://localhost\:${process.env.PORT}\n
         Client ID: ${process.env.CLIENT_ID}
         Node Env: ${process.env.NODE_ENV}
         Debug: ${process.env.DEBUG}\n`
