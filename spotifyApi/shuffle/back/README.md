@@ -17,6 +17,7 @@ Steps:
 3. Create a .env file in the root directory
     - The text inside should look like:
     ```
+    PORT=8081
     CLIENT_ID=a209d8e4f
     NODE_ENV=production
     ```
