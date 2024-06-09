@@ -14,6 +14,8 @@ values prior to launching the program in the terminal. */
 declare global {
     namespace NodeJS {
         interface ProcessEnv {
+            PORT: number
+
             // Spotify Developer's App ID
             CLIENT_ID: string
 

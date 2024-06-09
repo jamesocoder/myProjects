@@ -20,12 +20,14 @@ async function run(): Promise<void> {
     setEnv();
 
     const app: express.Application = express();
-    const PORT: number = 8081;
-    const SERVER_URL: string = `http://localhost:${PORT}`;
+    /* TODO: This localhost URL won't be applicable once this app is
+    deployed.  Should delete this as well as modify the printout on
+    deployment. */
+    const SERVER_URL: string = `http://localhost:${process.env.PORT}`;
 
     app.use(setRoutes());
 
-    app.listen(PORT, () => {
+    app.listen(process.env.PORT, () => {
       console.log(`\nServer listening...\n${SERVER_URL}\n
         Client ID: ${process.env.CLIENT_ID}
         Node Env: ${process.env.NODE_ENV}
