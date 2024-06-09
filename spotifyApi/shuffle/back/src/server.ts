@@ -25,7 +25,6 @@ type Environment = {
     Express's stack trace printing on error */
     NODE_ENV?: string
 }
-
 const setEnv = (): Environment => {
   let env: Environment = {};
   let result = dotenv.config({
@@ -36,12 +35,26 @@ const setEnv = (): Environment => {
 
 const setRoutes = (): express.Router => {
   const router = express.Router();
+
+  router.get('/', (req, res) => {
+    res.send("test string");
+  });
+
   return router;
 }
 
 async function run(): Promise<void> {
     const env: Environment = setEnv();
-    console.log(env.CLIENT_ID);
+
+    const app: express.Application = express();
+    const PORT: number = 8081;
+    const SERVER_URL: string = `http://localhost:${PORT}`;
+
+    app.use(setRoutes());
+
+    app.listen(PORT, () => {
+      console.log(`\nServer listening...\n${SERVER_URL}\nCient ID: ${env.CLIENT_ID}\n`);
+    });
 }
 
 run().catch(console.error);
