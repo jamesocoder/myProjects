@@ -21,6 +21,10 @@ declare global {
 
             PORT: number
 
+            /* Assigned the server's complete root address
+            once the server is started by server.ts.run() */
+            ADDRESS: string
+
             // Spotify Developer's App ID
             CLIENT_ID: string
 
