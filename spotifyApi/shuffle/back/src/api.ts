@@ -10,6 +10,8 @@ export function authorize(req: Request, res: Response) {
 
     const authUrl = new URL('https://accounts.spotify.com/authorize');
 
+    // TODO: Store code_verifier on server.  Create code_challenge here.
+
     /* Note how TypeScript forces us to conform to the type
     Record<string, string> when declaring members for an object
     that will be passed into URLSearchParams.  We must explicitly
