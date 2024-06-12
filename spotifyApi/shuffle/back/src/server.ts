@@ -1,19 +1,17 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import {routes as routesAuthorization} from './apiAuthorization.js';
 import {AddressInfo} from 'net';
-import {routes} from './api.js';
-
-const setEnv = (): void => {
-  let result = dotenv.config();
-  if ('error' in result) {throw result.error;}
-}
 
 async function run(): Promise<void> {
-    if (process.env.NODE_ENV !== 'production') {setEnv();}
+    if (process.env.NODE_ENV !== 'production') {
+      let result = dotenv.config();
+      if ('error' in result) {throw result.error;}      
+    }
 
     const app: express.Application = express();
 
-    app.use(routes);
+    app.use(routesAuthorization);
 
     const server = app.listen(process.env.PORT, () => {
       const address = server.address() as AddressInfo;
