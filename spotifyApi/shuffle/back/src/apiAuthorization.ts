@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import * as crypto from 'node:crypto'
 
+export const routes = Router();
+
 /* Example of Immediately Invoked Function Expression (IIFE)
 A concept that I learned about in class that fits this use-case
 perfectly.  This function will only ever be invoked once and helps
@@ -18,10 +20,6 @@ const codeVerifier = ((): string => {
     );
     return result;
 })();
-
-export const routes = Router();
-
-routes.all('/', (req, res) => {res.sendStatus(400);});
 
 routes.get('/authorize', async (req, res) => {
     if (!('PostAuthHandler' in req.query)) {res.sendStatus(400);}

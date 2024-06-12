@@ -10,7 +10,7 @@ async function run(): Promise<void> {
     }
 
     const app: express.Application = express();
-
+    app.all('/', (req, res) => {res.sendStatus(400);});
     app.use(routesAuthorization);
 
     const server = app.listen(process.env.PORT, () => {
