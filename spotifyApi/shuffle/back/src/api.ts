@@ -1,6 +1,10 @@
-import { Request, Response } from "express";
+import { Router } from "express";
 
-export function authorize(req: Request, res: Response) {
+export const routes = Router();
+
+routes.all('/', (req, res) => {res.sendStatus(400);});
+
+routes.get('/authorize', (req, res) => {
     if (
         !(
             'CodeChallenge' in req.query &&
@@ -28,9 +32,9 @@ export function authorize(req: Request, res: Response) {
     /* TODO: Implement frontend
     res.redirect(authUrl.toString());
     */ res.send("Valid request received");
-}
+});
 
-export async function getToken(req: Request, res: Response, next: Function) {
+routes.get('token-get', (req, res, next) => {
     if (
         !(
             'AuthCode' in req.query && 
@@ -58,4 +62,4 @@ export async function getToken(req: Request, res: Response, next: Function) {
         });
         */ res.send("Valid request received");
     }
-}
+});

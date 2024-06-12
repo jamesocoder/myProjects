@@ -1,21 +1,11 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import {AddressInfo} from 'net';
-import * as api from './api.js';
+import {routes} from './api.js';
 
 const setEnv = (): void => {
   let result = dotenv.config();
   if ('error' in result) {throw result.error;}
-}
-
-const setRoutes = (): express.Router => {
-  const router = express.Router();
-
-  router.all('/', (req, res) => {res.sendStatus(400);});
-  router.get('/authorize', api.authorize);
-  router.get('/token-get', api.getToken);
-
-  return router;
 }
 
 async function run(): Promise<void> {
@@ -23,7 +13,7 @@ async function run(): Promise<void> {
 
     const app: express.Application = express();
 
-    app.use(setRoutes());
+    app.use(routes);
 
     const server = app.listen(process.env.PORT, () => {
       const address = server.address() as AddressInfo;
