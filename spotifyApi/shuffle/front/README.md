@@ -29,9 +29,9 @@ Steps:
     - You can change App.tsx's handleClick() function to dispatch an incremented() action instead of amountAdded().
         - After doing so and saving the file, you'll also see a demonstration of Vite's Hot Module Replacement.  Without having to reload the page, when you click the button, it will only be incremented by 1.
 
-# React + TypeScript + Vite
+# Toolchain
 
-Based off a Vite template that provided a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project was started from a Vite + React + TypeScript template that provided a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
 

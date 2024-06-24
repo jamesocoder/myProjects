@@ -8,7 +8,13 @@ function App() {
   const count = useAppSelector((state) => state.counter.value);
   const dispatch = useAppDispatch();
 
-  function handleClick() {dispatch(amountAdded(3))};
+  function handleClick() {
+    // increment by 1
+    //dispatch(increment());
+
+    // increment by a fixed amount
+    dispatch(amountAdded(3));
+  };
 
   return (
     <>

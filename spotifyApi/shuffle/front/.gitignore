@@ -1,3 +1,6 @@
+# Custom Ignores
+/src/features/dogs/*
+
 # Logs
 logs
 *.log
