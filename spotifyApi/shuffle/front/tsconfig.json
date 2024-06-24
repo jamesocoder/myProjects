@@ -22,5 +22,6 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],
+  "exclude": ["src/features/dogs"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
