@@ -1,5 +1,5 @@
 # Custom Ignores
-/src/features/dogs/*
+/src/appState/slices/dogs.ts
 
 # Logs
 logs

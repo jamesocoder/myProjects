@@ -1,8 +1,8 @@
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import {useAppDispatch, useAppSelector} from './app/hooks';
-import { incremented, amountAdded } from './features/counter/counterSlice';
+import {useAppDispatch, useAppSelector} from './appState/hooks';
+import { incremented, amountAdded } from './appState/slices/counter';
 
 function App() {
   const count = useAppSelector((state) => state.counter.value);
