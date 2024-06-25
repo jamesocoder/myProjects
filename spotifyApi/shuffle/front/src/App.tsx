@@ -1,23 +1,57 @@
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import {useAppDispatch, useAppSelector} from './appState/hooks';
-import { incremented, amountAdded } from './appState/slices/counter';
+
+import {
+  createBrowserRouter,
+  redirect,
+  RouterProvider
+} from 'react-router-dom';
+import {GetAuth, SaveToken} from './components/authorization';
+
+// TODO: Store access_token in state, refresh_token in localStorage
 
 function App() {
-  const count = useAppSelector((state) => state.counter.value);
-  const dispatch = useAppDispatch();
+  const backend = import.meta.env.VITE_BACKEND;
 
-  function handleClick() {
-    // increment by 1
-    //dispatch(increment());
+  let serverAddr = import.meta.env.DEV ? "http" : "https";
+  serverAddr += `://${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}`;
+  
+  const AUTH_ENDPOINT = '/authorize';
+  const authUrl = serverAddr + AUTH_ENDPOINT;
 
-    // increment by a fixed amount
-    dispatch(amountAdded(3));
-  };
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      loader: () => {
+        return redirect(`${backend}/authorize?redirect=${authUrl}`)
+      },
+      element: <GetAuth />
+    },
+    {
+      path: AUTH_ENDPOINT,
+      loader: async ({request}: {request: Request}) => {
+        const url = new URL(request.url);
+        if (url.searchParams.has('code')) {
+          let apiParams = new URLSearchParams({
+            AuthCode: url.searchParams.get('code') as string,
+            redirect: authUrl
+          });
+          const data = await fetch(`${backend}/token-get?${apiParams.toString()}`);
+          return data;
+        } else { return null; }
+      },
+      element: <SaveToken />
+    }
+  ]);
 
   return (
     <>
+      <RouterProvider
+        router = {router}
+        fallbackElement={<div>LOADING...</div>}
+      />
+
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -26,18 +60,7 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={handleClick}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <p>Vite + React + Redux</p>
     </>
   )
 }

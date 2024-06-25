@@ -22,7 +22,10 @@ const codeVerifier = ((): string => {
 })();
 
 routes.get('/authorize', async (req, res) => {
-    if (!('PostAuthHandler' in req.query)) {res.sendStatus(400);}
+    if (!('redirect' in req.query)) {
+        res.sendStatus(400);
+        return;
+    }
 
     const authUrl = new URL('https://accounts.spotify.com/authorize');
 
@@ -49,22 +52,20 @@ routes.get('/authorize', async (req, res) => {
         scope: 'user-read-private user-read-email',
         code_challenge_method: 'S256',
         code_challenge: codeChallenge,
-        redirect_uri: req.query['PostAuthHandler'] as string
+        redirect_uri: req.query['redirect'] as string
     }
     authUrl.search = new URLSearchParams(params).toString();
-    /* TODO: Implement frontend
+
     res.redirect(authUrl.toString());
-    */ res.send(`Valid request received<br><br>${authUrl.toString()}`);
 });
 
-routes.get('/token-get', (req, res, next) => {
+routes.get('/token-get', async (req, res, next) => {
     if (
         !(
             'AuthCode' in req.query && 
-            'PostTokenHandler' in req.query
+            'redirect' in req.query
         )
     ) {res.sendStatus(400);} else {
-        /* TODO: Implement frontend
         await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -72,16 +73,15 @@ routes.get('/token-get', (req, res, next) => {
                 client_id: process.env.CLIENT_ID,
                 grant_type: 'authorization_code',
                 code: req.query['AuthCode'] as string,
-                redirect_uri: req.query['PostTokenHandler'] as string,
+                redirect_uri: req.query['redirect'] as string,
                 code_verifier: codeVerifier
             })
-        }).then(result => {
+        }).then(async result => {
             // On success, send the retrieved token
-            res.json(result.json());
+            res.json(await result.json());
         }).catch(err => {
             // On fail, send the Error object
             next(err);
         });
-        */ res.send("Valid request received");
     }
 });

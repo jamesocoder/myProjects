@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import cors from 'cors';
 import {routes as routesAuthorization} from './apiAuthorization.js';
 import {AddressInfo} from 'net';
 
@@ -10,6 +11,11 @@ async function run(): Promise<void> {
     }
 
     const app: express.Application = express();
+
+    app.use(cors({
+      origin: process.env.CLIENT_HOST
+    }));
+
     app.all('/', (req, res) => {res.sendStatus(400);});
     app.use(routesAuthorization);
 
