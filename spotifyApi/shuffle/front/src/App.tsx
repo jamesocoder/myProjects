@@ -7,6 +7,7 @@ import {
   redirect,
   RouterProvider
 } from 'react-router-dom';
+
 import {GetAuth, SaveToken} from './components/authorization';
 
 // TODO: Store access_token in state, refresh_token in localStorage
@@ -41,7 +42,8 @@ function App() {
           return data;
         } else { return null; }
       },
-      element: <SaveToken />
+      element: <SaveToken />,
+      errorElement: <GetAuth />
     }
   ]);
 

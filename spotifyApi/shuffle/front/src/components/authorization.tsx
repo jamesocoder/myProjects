@@ -3,8 +3,13 @@ import {useAppDispatch, useAppSelector} from '../state/hooks';
 import {save} from '../state/slices/authorization';
 
 export function GetAuth() {
+    const access = useAppSelector(state => state.authorize.access);
+
+    let err = access ? <></> : <p>User refused authorization.</p>;
+
     return (<div>
         <h1>Get Authorization Component Rendered</h1>
+        {err}
     </div>);
 }
 
