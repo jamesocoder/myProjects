@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as crypto from 'node:crypto'
+import * as crypto from 'node:crypto';
 
 export const routes = Router();
 
@@ -10,7 +10,7 @@ us encapsulate the variables used to generate its output, stopping
 us from polluting the global namespace.
 
 https://developer.mozilla.org/en-US/docs/Glossary/IIFE */
-const codeVerifier = ((): string => {
+const CODE_VERIFIER = ((): string => {
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' +
         '0123456789';
     const randomValues = crypto.getRandomValues(new Uint8Array(64));
@@ -21,67 +21,89 @@ const codeVerifier = ((): string => {
     return result;
 })();
 
-routes.get('/authorize', async (req, res) => {
-    if (!('redirect' in req.query)) {
-        res.sendStatus(400);
-        return;
-    }
+const TOKEN_API = 'https://accounts.spotify.com/api/token';
+const TOKEN_REQUEST = {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+}
 
-    const authUrl = new URL('https://accounts.spotify.com/authorize');
+const AUTH_ENDPOINT = '/authorize';
+routes.get(AUTH_ENDPOINT, async (req, res, next) => {
+    if (Object.keys(req.query).length === 0) {
+        // The client is requesting an authorization
+        const authUrl = new URL('https://accounts.spotify.com/authorize');
 
-    const hashed = await crypto.subtle.digest(
-        'SHA-256',
-        new TextEncoder().encode(codeVerifier)
-    );
-    /* The replacements here remove characters that would be
-    problematic in a URL's Search Query; they are reserved characters
-    in URLs */
-    const codeChallenge =
-        btoa(String.fromCharCode(...new Uint8Array(hashed)))
-        .replace(/=/g, '')
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_');
+        const hashed = await crypto.subtle.digest(
+            'SHA-256',
+            new TextEncoder().encode(CODE_VERIFIER)
+        );
+        /* The replacements here remove characters that would be
+        problematic in a URL's Search Query; they are reserved characters
+        in URLs */
+        const codeChallenge =
+            btoa(String.fromCharCode(...new Uint8Array(hashed)))
+            .replace(/=/g, '')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_');
 
-    /* Note how TypeScript forces us to conform to the key:value
-    type, Record<string, string>, when declaring members for an
-    object that will be passed into URLSearchParams.  We must
-    explicitly declare that req.query's elements are strings. */
-    const params = {
-        response_type: 'code',
-        client_id: process.env.CLIENT_ID,
-        scope: 'user-read-private user-read-email',
-        code_challenge_method: 'S256',
-        code_challenge: codeChallenge,
-        redirect_uri: req.query['redirect'] as string
-    }
-    authUrl.search = new URLSearchParams(params).toString();
+        const params = {
+            response_type: 'code',
+            client_id: process.env.CLIENT_ID,
+            scope: 'user-read-private user-read-email',
+            code_challenge_method: 'S256',
+            code_challenge: codeChallenge,
+            redirect_uri: process.env.ADDRESS + AUTH_ENDPOINT
+        }
+        authUrl.search = new URLSearchParams(params).toString();
 
-    res.redirect(authUrl.toString());
-});
-
-routes.get('/token-get', async (req, res, next) => {
-    if (
-        !(
-            'AuthCode' in req.query && 
-            'redirect' in req.query
-        )
-    ) {res.sendStatus(400);} else {
-        await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        res.redirect(authUrl.toString());
+    } else if (req.query['code'] !== undefined) {
+        // Spotify has sent an authorization code
+        await fetch(TOKEN_API, {
+            ...TOKEN_REQUEST,
             body: new URLSearchParams({
                 client_id: process.env.CLIENT_ID,
                 grant_type: 'authorization_code',
-                code: req.query['AuthCode'] as string,
-                redirect_uri: req.query['redirect'] as string,
-                code_verifier: codeVerifier
+                code: req.query['code'] as string,
+                redirect_uri: process.env.ADDRESS + AUTH_ENDPOINT,
+                code_verifier: CODE_VERIFIER
             })
         }).then(async result => {
-            // On success, send the retrieved token
+            // On success, send the retrieved token to the client
             res.json(await result.json());
         }).catch(err => {
             // On fail, send the Error object
             next(err);
         });
+    } else if (req.query['error'] !== undefined) {
+        // Spotify has sent an {error: 'access_denied'}
+        res.sendStatus(401);
+    } else {
+        next(new Error(
+            '/authorize endpoint has received an unexpected request: ' +
+            req.url.toString()
+        ));
+    }
+});
+
+routes.get('/token-refresh', async (req, res, next) => {
+    if (!('tokenRefresh' in req.query)) {res.sendStatus(400);}
+    else {
+        /* Note how TypeScript forces us to conform to the key:value
+        type, Record<string, string>, when declaring members for an
+        object that will be passed into URLSearchParams.  We must
+        explicitly declare that req.query's elements are strings. */
+        await fetch(TOKEN_API, {
+            ...TOKEN_REQUEST,
+            body: new URLSearchParams({
+                grant_type: 'refresh_token',
+                refresh_token: req.query['tokenRefresh'] as string,
+                client_id: process.env.CLIENT_ID
+            })
+        }).then(async result => {
+            res.json(await result.json());
+        }).catch(err => {
+            next(err);
+        })
     }
 });
