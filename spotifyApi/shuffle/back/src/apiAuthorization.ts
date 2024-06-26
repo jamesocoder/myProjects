@@ -57,8 +57,13 @@ routes.get(AUTH_ENDPOINT, async (req, res, next) => {
         authUrl.search = new URLSearchParams(params).toString();
 
         res.redirect(authUrl.toString());
-    } else if (req.query['code'] !== undefined) {
+    } else if ('code' in req.query) {
         // Spotify has sent an authorization code
+
+        /* Note how TypeScript forces us to conform to the key:value
+        type, Record<string, string>, when declaring members for an
+        object that will be passed into URLSearchParams.  We must
+        explicitly declare that req.query's elements are strings. */
         await fetch(TOKEN_API, {
             ...TOKEN_REQUEST,
             body: new URLSearchParams({
@@ -75,13 +80,13 @@ routes.get(AUTH_ENDPOINT, async (req, res, next) => {
             // On fail, send the Error object
             next(err);
         });
-    } else if (req.query['error'] !== undefined) {
+    } else if ('error' in req.query) {
         // Spotify has sent an {error: 'access_denied'}
         res.sendStatus(401);
     } else {
         next(new Error(
-            '/authorize endpoint has received an unexpected request: ' +
-            req.url.toString()
+            '/authorize endpoint has received an unexpected query string:\n\n?' +
+            new URLSearchParams(req.query as Record<string, string>).toString() + '\n'
         ));
     }
 });
@@ -89,10 +94,6 @@ routes.get(AUTH_ENDPOINT, async (req, res, next) => {
 routes.get('/token-refresh', async (req, res, next) => {
     if (!('tokenRefresh' in req.query)) {res.sendStatus(400);}
     else {
-        /* Note how TypeScript forces us to conform to the key:value
-        type, Record<string, string>, when declaring members for an
-        object that will be passed into URLSearchParams.  We must
-        explicitly declare that req.query's elements are strings. */
         await fetch(TOKEN_API, {
             ...TOKEN_REQUEST,
             body: new URLSearchParams({
