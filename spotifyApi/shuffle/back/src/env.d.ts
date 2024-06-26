@@ -28,6 +28,9 @@ declare global {
             // Spotify Developer's App ID
             CLIENT_ID: string
 
+            // Address of the frontend
+            CLIENT_HOST: string
+
             /* For setting the app into production mode
             which disables Express's stack trace printing
             on error */
