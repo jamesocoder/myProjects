@@ -24,14 +24,20 @@ export function SaveToken() {
     const dispatch = useAppDispatch();
     dispatch(save({access: access_token}));
 
+    localStorage.setItem('tokenRefresh', refresh_token);
+    localStorage.setItem(
+        'tokenExpire',
+        new Date(new Date().getTime() + (expires_in * 1000)).toUTCString()
+    )
+
     const access = useAppSelector(state => state.authorize.access);
 
     return <>
         <h1>Authorization Token Obtained</h1>
         <ul style={{textAlign: 'left'}}>
             <li><strong>Access Token: </strong>{access}</li>
-            <li><strong>Refresh Token: </strong>{refresh_token}</li>
-            <li><strong>Duration (in seconds): </strong>{expires_in}</li>
+            <li><strong>Refresh Token: </strong>{localStorage.getItem('tokenRefresh')}</li>
+            <li><strong>Expires at: </strong>{localStorage.getItem('tokenExpire')}</li>
         </ul>
     </>
 }

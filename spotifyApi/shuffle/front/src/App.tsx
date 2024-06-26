@@ -10,15 +10,13 @@ import {
 
 import {GetAuth, SaveToken} from './components/authorization';
 
-// TODO: Store access_token in state, refresh_token in localStorage
-
 function App() {
   const backend = import.meta.env.VITE_BACKEND;
 
   let serverAddr = import.meta.env.DEV ? "http" : "https";
   serverAddr += `://${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}`;
   
-  const AUTH_ENDPOINT = '/authorize';
+  const AUTH_ENDPOINT = '/token-get';
   const authUrl = serverAddr + AUTH_ENDPOINT;
 
   const router = createBrowserRouter([
