@@ -9,12 +9,12 @@ const slice = createSlice({
     reducers: {
         save(state, action: PayloadAction<savedToken>) {
             state.access = action.payload.access;
-            /* state.refresh = action.payload.refresh_token;
-            state.expiresIn = action.payload.expires_in;
-            state.expiry = new Date(new Date().getTime() + (action.payload.expires_in * 1000)); */
+        },
+        reset(state) {
+            state.access = initialState.access
         }
     }
 });
 
-export const {save} = slice.actions;
+export const {save, reset} = slice.actions;
 export const authorize = slice.reducer;
