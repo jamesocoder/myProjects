@@ -1,28 +1,21 @@
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import {
-  createBrowserRouter,
-  RouterProvider
-} from 'react-router-dom';
-import {
-  checkToken,
-  SaveToken,
-  ShowToken
-} from './components/authorization';
+import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import {Login} from './components/authComp';
 
 function App() {
-  /*
-  let serverAddr = import.meta.env.DEV ? "http" : "https";
-  serverAddr += `://${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}`;
-  */
+  /* Record frontend's address
+  import.meta.env.VITE_ADDR = (() => {
+    let serverAddr = import.meta.env.DEV ? "http" : "https";
+    serverAddr += `://${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}`;
+    return serverAddr;
+  })(); */
 
   const router = createBrowserRouter([
     {
       path: '/',
-      loader: checkToken,
-      element: <SaveToken />,
-      errorElement: <ShowToken />
+      element: <Login />
     }
   ]);
 
