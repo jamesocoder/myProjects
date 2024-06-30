@@ -31,7 +31,10 @@ export function Login(): JSX.Element {
                 <p>This app doesn't do anything until you give it your authorization.</p>
             </div>
         } else if (qry.has('logged-out')) {
-            result = <h1>Logged Out</h1>
+            result = <div>
+                <h1>Logged Out</h1>
+                <button onClick={() => setQry('')}>Log Back In</button>
+            </div>
         } else {
             /* Explanation of SpotifyApi.performUserAuthorization()
             This function helps us perform Spotify's client-side authorization
