@@ -1,29 +1,37 @@
 import {useSearchParams} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../state/hooks';
-import {authorize} from '../state/slices/authSlice';
+import {authorize, logout} from '../state/slices/authSlice';
 import {saveErrToTxt} from '../utils';
 
 /* Source root: https://github.com/spotify/spotify-web-api-ts-sdk/blob/main/src
 Scopes: ./Scopes.ts
 SpotifyApi: ./SpotifyApi.ts */
 import {AccessToken, Scopes, SpotifyApi} from "@spotify/web-api-ts-sdk";
+import { useCallback } from 'react';
 
 export function Login(): JSX.Element {
     const serverAddr = useAppSelector(state => state.server.addr);
     const authorization = useAppSelector(state => state.authorization);
     const dispatch = useAppDispatch();
-    const [qry] = useSearchParams();
+    const [qry, setQry] = useSearchParams();
+
+    const cbLogout = useCallback(() => {
+        setQry('logged-out=1');
+        dispatch(logout());
+    }, [setQry]);
 
     let result: JSX.Element = <></>;
 
     if (authorization.authenticated) {
-        result = showToken(authorization.accessToken);
+        result = showToken(authorization.accessToken, cbLogout);
     } else {
         if (qry.has('error')) {
             result = <div>
                 <h1>Authorization Declined</h1>
                 <p>This app doesn't do anything until you give it your authorization.</p>
             </div>
+        } else if (qry.has('logged-out')) {
+            result = <h1>Logged Out</h1>
         } else {
             /* Explanation of SpotifyApi.performUserAuthorization()
             This function helps us perform Spotify's client-side authorization
@@ -62,7 +70,7 @@ export function Login(): JSX.Element {
                 if (authResp.authenticated){
                     authResp.accessToken.expires = Date.now() + (authResp.accessToken.expires_in * 1000);
                     dispatch(authorize(authResp));
-                    result = showToken(authorization.accessToken);
+                    result = showToken(authorization.accessToken, cbLogout);
                 }
             }).catch(err => {
                 saveErrToTxt(err)
@@ -76,7 +84,7 @@ export function Login(): JSX.Element {
 
     return result;
 }
-function showToken(token: AccessToken) {
+function showToken(token: AccessToken, cbLogout: any) {
     return <div>
         <h1>Current Token Information</h1>
         <ul style={{textAlign: 'left'}}>
@@ -84,5 +92,6 @@ function showToken(token: AccessToken) {
             <li><strong>Refresh Token: </strong>{token.refresh_token}</li>
             <li><strong>Expires on: </strong>{new Date(token.expires!).toString()}</li>
         </ul>
+        <button onClick={() => cbLogout()}>Logout</button>
     </div>
 }
