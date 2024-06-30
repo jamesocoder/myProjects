@@ -9,6 +9,7 @@ SpotifyApi: ./SpotifyApi.ts */
 import {AccessToken, Scopes, SpotifyApi} from "@spotify/web-api-ts-sdk";
 
 export function Login(): JSX.Element {
+    const serverAddr = useAppSelector(state => state.server.addr);
     const authorization = useAppSelector(state => state.authorization);
     const dispatch = useAppDispatch();
     const [qry] = useSearchParams();
@@ -42,7 +43,7 @@ export function Login(): JSX.Element {
             that does nothing. */
             SpotifyApi.performUserAuthorization(
                 import.meta.env.VITE_CLIENT_ID,
-                'http://localhost:8080',
+                serverAddr,
                 Scopes.userDetails,
                 async () => {}
             ).then(authResp => {
