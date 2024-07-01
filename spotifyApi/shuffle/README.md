@@ -43,10 +43,18 @@
 5. Build the backend with the `tsc` command in the backend's terminal
 6. Start the backend server with `node ./build/server.js`
     - Note that you can cause the server to print debug messages the terminal DEBUG environment variable to `DEBUG=express:*`
-7. In the frontend's terminal, use `vite` to start it
-8. Open the address that the frontend prints in a browser
+7. In `./front`, create a .env file
+    - The text inside should be:
+    ```
+    VITE_CLIENT_ID=SameAsBackendClientId
+    VITE_HOST=localhost
+    VITE_PORT=8080
+    VITE_BACKEND=http://localhost:8081
+    ```
+8. In the frontend's terminal, use `vite` to start it
+9. Open the address that the frontend prints in a browser
     - It should immediately ask you to sign into Spotify
     - A denial will print a simple message
-9. An authorization will print the access token issued by Spotify allowing us to use its API
+10. An authorization will print the access token issued by Spotify allowing us to use its API
     - You then have access to some self-explanatory buttons on the bottom demonstrating use of Spotify's API
     - Your authorization will persist throughout browser sessions for an hour, after which you'll need to authorize the application again.
