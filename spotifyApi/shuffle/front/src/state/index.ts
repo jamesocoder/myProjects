@@ -7,4 +7,5 @@ export {
     useAppDispatch,
     initAddr,
     authorize,
-    logout }
+    logout
+}
