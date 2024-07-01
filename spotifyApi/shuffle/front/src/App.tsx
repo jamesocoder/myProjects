@@ -1,10 +1,9 @@
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import { useAppDispatch } from './state/hooks';
-import { initAddr } from './state/slices/addrSlice';
-import {createBrowserRouter, RouterProvider} from 'react-router-dom';
-import {Login} from './components/authComp';
+import { useAppDispatch, initAddr } from './state';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { Login, TopArtists } from './components';
 
 function App() {
   useAppDispatch()(initAddr());
@@ -13,6 +12,9 @@ function App() {
     {
       path: '/',
       element: <Login />
+    }, {
+      path: '/myTop5',
+      element: <TopArtists />
     }
   ]);
 

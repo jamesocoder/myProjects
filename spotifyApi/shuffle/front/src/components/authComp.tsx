@@ -1,29 +1,32 @@
-import {useSearchParams} from 'react-router-dom';
-import {useAppDispatch, useAppSelector} from '../state/hooks';
-import {authorize, logout} from '../state/slices/authSlice';
+import {useNavigate, useSearchParams} from 'react-router-dom';
+import {useAppDispatch, useAppSelector, authorize, logout} from '../state';
+import {useCallback} from 'react';
 import {saveErrToTxt} from '../utils';
 
 /* Source root: https://github.com/spotify/spotify-web-api-ts-sdk/blob/main/src
 Scopes: ./Scopes.ts
 SpotifyApi: ./SpotifyApi.ts */
 import {AccessToken, Scopes, SpotifyApi} from "@spotify/web-api-ts-sdk";
-import { useCallback } from 'react';
 
 export function Login(): JSX.Element {
     const serverAddr = useAppSelector(state => state.server.addr);
     const authorization = useAppSelector(state => state.authorization);
     const dispatch = useAppDispatch();
     const [qry, setQry] = useSearchParams();
+    const navigate = useNavigate();
 
     const cbLogout = useCallback(() => {
         setQry('logged-out=1');
         dispatch(logout());
     }, [setQry]);
+    const cbTop5 = useCallback(() => {
+        navigate('/myTop5');
+    }, [navigate])
 
     let result: JSX.Element = <></>;
 
     if (authorization.authenticated) {
-        result = showToken(authorization.accessToken, cbLogout);
+        result = showToken(authorization.accessToken, cbLogout, cbTop5);
     } else {
         if (qry.has('error')) {
             result = <div>
@@ -55,7 +58,7 @@ export function Login(): JSX.Element {
             SpotifyApi.performUserAuthorization(
                 import.meta.env.VITE_CLIENT_ID,
                 serverAddr,
-                Scopes.userDetails,
+                Scopes.userDetails.concat(Scopes.userRecents),
                 async () => {}
             ).then(authResp => {
                 /* To account for lag between the frontend and the backend, and because
@@ -73,7 +76,7 @@ export function Login(): JSX.Element {
                 if (authResp.authenticated){
                     authResp.accessToken.expires = Date.now() + (authResp.accessToken.expires_in * 1000);
                     dispatch(authorize(authResp));
-                    result = showToken(authorization.accessToken, cbLogout);
+                    result = showToken(authorization.accessToken, cbLogout, cbTop5);
                 }
             }).catch(err => {
                 saveErrToTxt(err)
@@ -87,7 +90,7 @@ export function Login(): JSX.Element {
 
     return result;
 }
-function showToken(token: AccessToken, cbLogout: any) {
+function showToken(token: AccessToken, cbLogout: Function, cbNav: Function) {
     return <div>
         <h1>Current Token Information</h1>
         <ul style={{textAlign: 'left'}}>
@@ -95,6 +98,7 @@ function showToken(token: AccessToken, cbLogout: any) {
             <li><strong>Refresh Token: </strong>{token.refresh_token}</li>
             <li><strong>Expires on: </strong>{new Date(token.expires!).toString()}</li>
         </ul>
+        <button onClick={() => cbNav()}>Show My Top 5 Artists</button>
         <button onClick={() => cbLogout()}>Logout</button>
     </div>
 }
