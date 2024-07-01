@@ -1,9 +1,13 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../state';
 import axios from 'axios';
 import { Artist, Image } from '@spotify/web-api-ts-sdk';
-import { useEffect, useState } from 'react';
 
 export function TopArtists(): JSX.Element {
     const [data, setData] = useState([]);
+    const navigate = useNavigate();
+    const addr = useAppSelector(state => state.server.addr);
 
     // Example of setting a root URL for axios requests
     const axDefault = axios.create({baseURL: import.meta.env.VITE_BACKEND});
@@ -29,16 +33,21 @@ export function TopArtists(): JSX.Element {
             https://stackoverflow.com/questions/46404051/send-object-with-axios-get-request/46404151#46404151 */
             axDefault.post('/top-5', token)
                 .then(result => setData(result.data.items))
-                .catch(err => console.error(err));
+                .catch(err => {
+                    console.error(err);
+                    /* Error was likely the result of an expired token.  Have user
+                    reauthenticate. */
+                    navigate('/');
+                });
         }
-    }, [setData, token]);
+    }, [setData, token, navigate]);
 
     return <>
         <h1>Your All-Time Top Artists</h1>
-        <table><tbody>{
+        <table><tbody><tr>{
             data.map((artist: Artist, index: number) => {
                 let image: Image = artist.images[0];
-                return <tr key={artist.id}>
+                return <td key={artist.id}>
                     <h2>{'#' + (index + 1)}</h2>
                     <img
                         src={image.url}
@@ -47,11 +56,9 @@ export function TopArtists(): JSX.Element {
                         border='5px' />
                     <p>{artist.name}</p>
                     <a href={artist.external_urls.spotify} target='_blank'>
-                        {artist.external_urls.spotify}
-                    </a>
-                </tr>
+                        {artist.external_urls.spotify}</a>
+                </td>
             })
-        }</tbody></table>
-        <div>{JSON.stringify(data)}</div>
+        }</tr></tbody></table>
     </>
 }
