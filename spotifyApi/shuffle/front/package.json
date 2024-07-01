@@ -2,6 +2,10 @@
   "name": "front",
   "private": true,
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamesocoder/myProjects/tree/main/spotifyApi/shuffle/front"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

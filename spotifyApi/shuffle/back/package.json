@@ -5,18 +5,23 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/jamesocoder/myProjects/tree/main/spotifyApi/shuffle/back"
   },
   "author": "James Ouk",
   "license": "MIT",
   "dependencies": {
     "@spotify/web-api-ts-sdk": "^1.2.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
     "express": "^4.19.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21"
+    "@types/express": "^4.17.21",
+    "vite": "^5.3.2",
+    "vite-plugin-node": "^3.1.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
   }
 }

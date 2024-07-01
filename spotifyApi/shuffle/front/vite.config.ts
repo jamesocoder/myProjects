@@ -10,6 +10,9 @@ export default ({mode}: {mode: string}) => {
     server: {
       host: process.env.VITE_HOST,
       port: parseInt(process.env.VITE_PORT as string)
+    },
+    build: {
+      outDir: './build'
     }
   });
 }
