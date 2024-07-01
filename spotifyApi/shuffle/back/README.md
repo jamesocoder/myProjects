@@ -11,3 +11,7 @@ Much of the setup and routing is handled by Express.  Writing the backend is mad
 ## dotenv
 
 It took some work to get this working in a TypeScript application, but this library now helps us set up environment variables as the Express server starts up.  On the frontend, Vite uses this library in the background to load its environment variables.
+
+## Spotify Web API TypeScript SDK
+
+Introduced in [July 2023](https://developer.spotify.com/blog/2023-07-03-typescript-sdk), this package greatly simplifies interacting with the web API.

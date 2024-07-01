@@ -14,7 +14,7 @@
 
 ## Optional:
 - yarn
-    - This is my preferred Node.js package manager
+    - This is the Node.js package manager I use most often
     - `npm install -g yarn`
 - Redux DevTool browser extension
     - Helps you observe changes to the app's state made with Redux
@@ -24,7 +24,7 @@
 
 1. Clone repo
 2. Open 2 terminals:
-    - All subsequent paths are relative to `myProjects/spotifyApi/shuffle`.  This is what `.` is equivalent to.
+    - All subsequent paths are relative to `myProjects/spotifyApi/shuffle`; this is what `.` is equivalent to.
     - Navigate one terminal to `./back`
     - Navigate the other to `./front`
 3. In both terminals run your preferred package manager's install command
@@ -47,4 +47,6 @@
 8. Open the address that the frontend prints in a browser
     - It should immediately ask you to sign into Spotify
     - A denial will print a simple message
-    - An authorization will print the access token issued by Spotify allowing us to use its API
+9. An authorization will print the access token issued by Spotify allowing us to use its API
+    - You then have access to some self-explanatory buttons on the bottom demonstrating use of Spotify's API
+    - Your authorization will persist throughout browser sessions for an hour, after which you'll need to authorize the application again.
