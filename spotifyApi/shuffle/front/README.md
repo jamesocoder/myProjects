@@ -19,6 +19,10 @@ The Redux Toolkit, in combination with TypeScript, has greatly reduced the amoun
 
 The [store.ts](./src/app/store.ts) and [hooks.ts](./src/app/hooks.ts) files demonstrate how easy it is to create and export pointers to and action dispatchers for each state variable using a couple lines of code.  After setting these up, they rarely have to be modified to handle new state variables or action types.  When a new action type is added to a slice, we only have to update the slice's file.  When we add a new slice, we only have to add a couple things to the store file to hook that new slice up to our global state.
 
+## Spotify Web API TypeScript SDK
+
+I am really enjoying exploring this SDK and have been learning a lot of techniques from reading its [source code](https://github.com/spotify/spotify-web-api-ts-sdk/tree/main).
+
 ## Option to expand the ESLint configuration
 
 If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:

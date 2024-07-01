@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
-import {routes as routesAuthorization} from './apiAuthorization.js';
+import {routes as rtTest} from './api/test.js';
 import {AddressInfo} from 'net';
 
 async function run(): Promise<void> {
@@ -17,7 +17,7 @@ async function run(): Promise<void> {
     }));
 
     app.all('/', (req, res) => {res.sendStatus(400);});
-    app.use(routesAuthorization);
+    app.use(rtTest);
 
     const server = app.listen(process.env.PORT, () => {
       const address = server.address() as AddressInfo;
