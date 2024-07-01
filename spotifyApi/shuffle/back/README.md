@@ -8,9 +8,9 @@ Our backend takes advantage of the Intellisense typing afforded by public @types
 
 Much of the setup and routing is handled by Express.  Writing the backend is made very simple using its well-documented API.
 
-## dotenv
+## vite-plugin-node
 
-It took some work to get this working in a TypeScript application, but this library now helps us set up environment variables as the Express server starts up.  On the frontend, Vite uses this library in the background to load its environment variables.
+This Vite plugin by [axe-me](https://github.com/axe-me-vite-plugin-node) allows us to use Vite's Hot Module Replacement on our backend server.  It also has a side effect of replacing our dotenv dependency with Vite's version of dotenv.  Now we don't have to use the `tsc && node ./build/server.js` command every time we make changes to the backend's code; Vite handles it for us intelligently.
 
 ## Spotify Web API TypeScript SDK
 

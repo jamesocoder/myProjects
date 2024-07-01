@@ -28,22 +28,20 @@
     - Navigate one terminal to `./back`
     - Navigate the other to `./front`
 3. In both terminals run your preferred package manager's install command
-    - `npm install`
-    - `yarn install`
+    - `npm install` OR `yarn install`
 4. In `./back`, create a .env file
     - The text inside should be:
     ```
-    DEPLOYED=0
-    PORT=8081
-    CLIENT_ID=AskMe
-    NODE_ENV=production
+    VITE_CLIENT_ID=AskMe
+    VITE_HOST=localhost
+    VITE_PORT=8081
+    VITE_FRONTEND=http://localhost:8080
     ```
-    - Ask me for the actual value of the CLIENT_ID
-    - Note that you can change NODE_ENV to *development* to cause an Express.js error stack trace to be printed in the browser as well as the server's terminal.
-5. Build the backend with the `tsc` command in the backend's terminal
-6. Start the backend server with `node ./build/server.js`
-    - Note that you can cause the server to print debug messages the terminal DEBUG environment variable to `DEBUG=express:*`
-7. In `./front`, create a .env file
+    - Ask me for the actual value of VITE_CLIENT_ID
+    - Note that by default, Vite runs in development mode, meaning NODE_ENV=development.  This causes Express.js to display error stack traces in the browser in addition to the default of in the terminal.  You can disable this additional behavior (while also causing other side effects with Vite) by adding a `mode: 'production'` member to the `defineConfig` Object argument in `./vite.config.ts`.
+5. In the backend's terminal, use `vite` to start it
+    - Note that you can cause Express.js to print debug messages in the terminal by setting the DEBUG environment variable: `DEBUG=express:*`
+6. In `./front`, create a .env file
     - The text inside should be:
     ```
     VITE_CLIENT_ID=SameAsBackendClientId
@@ -51,10 +49,10 @@
     VITE_PORT=8080
     VITE_BACKEND=http://localhost:8081
     ```
-8. In the frontend's terminal, use `vite` to start it
-9. Open the address that the frontend prints in a browser
+7. In the frontend's terminal, use `vite` to start it
+8. Open the address that the frontend prints in a browser
     - It should immediately ask you to sign into Spotify
     - A denial will print a simple message
-10. An authorization will print the access token issued by Spotify allowing us to use its API
-    - You then have access to some self-explanatory buttons on the bottom demonstrating use of Spotify's API
+9. On authorization, the app will print the access token issued by Spotify that allows us to use its API
+    - You then have access to some self-explanatory buttons on the bottom demonstrating use of the API
     - Your authorization will persist throughout browser sessions for an hour, after which you'll need to authorize the application again.
