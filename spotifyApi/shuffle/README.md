@@ -28,7 +28,7 @@
     - Navigate one terminal to `./back`
     - Navigate the other to `./front`
 3. In both terminals run your preferred package manager's install command
-    - `npm install` OR `yarn install`
+    - e.g. `npm install` OR `yarn install`
 4. In `./back`, create a .env file
     - The text inside should be:
     ```
@@ -38,7 +38,7 @@
     VITE_FRONTEND=http://localhost:8080
     ```
     - Ask me for the actual value of VITE_CLIENT_ID
-    - Note that by default, Vite runs in development mode, meaning NODE_ENV=development.  This causes Express.js to display error stack traces in the browser in addition to the default of in the terminal.  You can disable this additional behavior (while also causing other side effects with Vite) by adding a `mode: 'production'` member to the `defineConfig` Object argument in `./vite.config.ts`.
+    - Note that by default, Vite runs in development mode, meaning `NODE_ENV=development`.  This causes Express.js to display error stack traces in the browser in addition to the default of in the terminal.  You can disable this additional behavior (while possibly also causing other probably harmless side effects with Vite) by adding a `mode: 'production'` member to the `defineConfig` Object argument in `./vite.config.ts`.
 5. In the backend's terminal, use `vite` to start it
     - Note that you can cause Express.js to print debug messages in the terminal by setting the DEBUG environment variable: `DEBUG=express:*`
 6. In `./front`, create a .env file
