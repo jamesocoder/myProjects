@@ -12,6 +12,15 @@ export function Login(): JSX.Element {
     const serverAddr = useAppSelector(state => state.server.addr);
     const authorization = useAppSelector(state => state.authorization);
     const dispatch = useAppDispatch();
+
+    /* Note that the following 2 declarations are for 2 different ways of
+    routing the user in the browser:
+    - useSearchParams edits the current page's search query.  If the component's
+    rendering logic is conditional on the contents of the query, it will react
+    accordingly.
+    - useNavigate can also be used to change the search query.  It can also direct
+    the user to completely different pages, causing different entirely components to
+    be rendered. */
     const [qry, setQry] = useSearchParams();
     const navigate = useNavigate();
 
