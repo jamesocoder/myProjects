@@ -1,7 +1,7 @@
-type OptionalNode = DllNode<any> | null;
-type NodeDirection = 'prev' | 'next';
+export type OptionalNode = DllNode<any> | null;
+export type NodeDirection = 'prev' | 'next';
 
-class DllNode<TPayload> {
+export class DllNode<TPayload> {
     private data: TPayload;
     private prev?: OptionalNode;
     private next?: OptionalNode;
@@ -80,10 +80,14 @@ class DllNode<TPayload> {
     }
 }
 
-console.log();
-let head = new DllNode<number>(1);
-let left = new DllNode<string>('two', head);
-let right = new DllNode<Error>(new Error('I am node number 3.'), left);
-console.log(head.toString());
-console.log(left.toString());
-console.log(right.toString());
+function testModule() {
+    console.log();
+    let head = new DllNode<number>(1);
+    let left = new DllNode<string>('two', head);
+    let right = new DllNode<Error>(new Error('I am node number 3.'), left);
+    console.log(head.toString());
+    console.log(left.toString());
+    console.log(right.toString());
+}
+
+// testModule();
