@@ -19,7 +19,7 @@ export function Login(): JSX.Element {
     rendering logic is conditional on the contents of the query, it will react
     accordingly.
     - useNavigate can also be used to change the search query.  It can also direct
-    the user to completely different pages, causing different entirely components to
+    the user to completely different pages, causing entirely different components to
     be rendered. */
     const [qry, setQry] = useSearchParams();
     const navigate = useNavigate();
