@@ -6,27 +6,48 @@ import {saveErrToTxt} from '../utils';
 /* Source root: https://github.com/spotify/spotify-web-api-ts-sdk/blob/main/src
 Scopes: ./Scopes.ts
 SpotifyApi: ./SpotifyApi.ts */
-import {AccessToken, Scopes, SpotifyApi} from "@spotify/web-api-ts-sdk";
+import {Scopes, SpotifyApi} from "@spotify/web-api-ts-sdk";
 
 export function Login(): JSX.Element {
     const serverAddr = useAppSelector(state => state.server.addr);
     const authorization = useAppSelector(state => state.authorization);
     const dispatch = useAppDispatch();
+
+    /* Note that the following 2 declarations are for 2 different ways of
+    routing the user in the browser:
+    - useSearchParams edits the current page's search query.  If the component's
+    rendering logic is conditional on the contents of the query, it will react
+    accordingly.
+    - useNavigate can also be used to change the search query.  It can also direct
+    the user to completely different pages, causing entirely different components to
+    be rendered. */
     const [qry, setQry] = useSearchParams();
     const navigate = useNavigate();
 
     const cbLogout = useCallback(() => {
-        setQry('logged-out=1');
         dispatch(logout());
-    }, [setQry]);
+        navigate('?logged-out=1');
+    }, [navigate]);
     const cbTop5 = useCallback(() => {
         navigate('/myTop5');
-    }, [navigate])
+    }, [navigate]);
+    const cbShowToken = useCallback(() => {
+        return <div>
+            <h1>Current Token Information</h1>
+            <ul style={{textAlign: 'left'}}>
+                <li><strong>Access Token: </strong>{authorization.accessToken.access_token}</li>
+                <li><strong>Refresh Token: </strong>{authorization.accessToken.refresh_token}</li>
+                <li><strong>Expires on: </strong>{new Date(authorization.accessToken.expires!).toString()}</li>
+            </ul>
+            <button onClick={() => cbTop5()}>Show My Top 5 Artists</button>
+            <button onClick={() => cbLogout()}>Logout</button>
+        </div>
+    }, [authorization, cbLogout, cbTop5]);
 
     let result: JSX.Element = <></>;
 
     if (authorization.authenticated) {
-        result = showToken(authorization.accessToken, cbLogout, cbTop5);
+        result = cbShowToken();
     } else {
         if (qry.has('error')) {
             result = <div>
@@ -76,7 +97,7 @@ export function Login(): JSX.Element {
                 if (authResp.authenticated){
                     authResp.accessToken.expires = Date.now() + (authResp.accessToken.expires_in * 1000);
                     dispatch(authorize(authResp));
-                    result = showToken(authorization.accessToken, cbLogout, cbTop5);
+                    result = cbShowToken();
                 }
             }).catch(err => {
                 saveErrToTxt(err)
@@ -89,16 +110,4 @@ export function Login(): JSX.Element {
     }
 
     return result;
-}
-function showToken(token: AccessToken, cbLogout: Function, cbNav: Function) {
-    return <div>
-        <h1>Current Token Information</h1>
-        <ul style={{textAlign: 'left'}}>
-            <li><strong>Access Token: </strong>{token.access_token}</li>
-            <li><strong>Refresh Token: </strong>{token.refresh_token}</li>
-            <li><strong>Expires on: </strong>{new Date(token.expires!).toString()}</li>
-        </ul>
-        <button onClick={() => cbNav()}>Show My Top 5 Artists</button>
-        <button onClick={() => cbLogout()}>Logout</button>
-    </div>
 }
