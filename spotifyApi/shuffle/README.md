@@ -1,3 +1,7 @@
+# Branch Goals:
+
+The goal of spotifyApi008 is to have both the frontend and the backend running on Docker containers and coordinated by a compose.yaml file.  I will try to learn how to minmize the size of my containers by possibly separating the build and the run stages and sharing dependencies through a single base image.
+
 # How to run
 
 ## Required modules:
