@@ -27,3 +27,7 @@ Many starter tutorials in Docker have no problem showing us how to inject enviro
 * You can view the results of each build step in the terminal by using `docker compose build --progress=plain --no-cache`
     - You'll be able to see the speed of each step and also the output of the 4th layer's command (`RUN ls`)
     - This adapts [this stackoverflow answer](https://stackoverflow.com/a/64805337/13084818) to compose by combining flags from the [base compose command](https://docs.docker.com/reference/cli/docker/compose/) and [compose's build command](https://docs.docker.com/reference/cli/docker/compose/build/)
+* Secrets can be stored in a JSON file and parsed into an object by Node's built-in JSON parser
+    - This offers a lightweight way to load multiple secrets from one file
+    - Note that the secrets file does not need to have the .json extension in either the host or the container.  The plain text inside can be parsed by Node's JSON tool without it.  In this example, .json is added to the host's file so that VSCode's intellisense can help with formatting it.
+    - For further secret obfuscation, a separate container could be made to store and encrypt secrets so that they aren't an unencrypted plaintext file in the container.

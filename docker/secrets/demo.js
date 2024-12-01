@@ -1,29 +1,21 @@
-const fs = require('fs');
+const fs = require('node:fs');
 const rl = require('readline');
 
+/* Variables loaded into the environment in compose.yaml can be
+read as usual.
+*/
 console.log(
     process.env.HOST,
     process.env.PORT,
     process.env.FRONTEND
 );
 
-let stream = fs.createReadStream(
-    './secrets/sec1'
-);
-stream.on('error', err => {
-    console.log(`Error reading file: ${err}`)
-});
-
-let line = rl.createInterface({
-    input: stream,
-    crlfDelay: Infinity
-});
-line.on('line', line => {
-    console.log(line);
-});
-line.on('close', () => {
-    console.log('Finished reading secrets');
-});
+// Variables loaded as secrets must be read from a file
+let secretsJson = JSON.parse(fs.readFileSync('./secrets/sec1'));
+// Show parsed object
+console.log(secretsJson);
+// Demonstrate accessing parsed secrets
+console.log(secretsJson.CLIENT_ID, secretsJson.HOST);
 
 // Wait for input before ending program
 let inp = rl.createInterface({
