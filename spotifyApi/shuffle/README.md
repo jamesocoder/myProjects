@@ -15,6 +15,7 @@ The goal of spotifyApi008 is to have both the frontend and the backend running o
     ```
 - TypeScript and Vite
     - `npm install -g typescript vite`
+    - If choosing not to install Vite globally, you can use a local project installation instead by using your package managers "run dev" command: `npm run dev` or `yarn dev`
 
 ## Optional:
 - yarn
