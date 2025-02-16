@@ -12,7 +12,8 @@ export default ({mode}: {mode: string}) => {
       port: parseInt(process.env.VITE_PORT as string)
     },
     build: {
-      outDir: './build'
+      outDir: './build',
+      minify: 'esbuild'
     }
   });
 }

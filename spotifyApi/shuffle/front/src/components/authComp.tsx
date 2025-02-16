@@ -68,7 +68,7 @@ export function Login(): JSX.Element {
             this frontend only displays said data and dispatches modification actions
             for the backend to process.
             
-            We expect VITE_ADDR to have been assigned a value by App.tsx before
+            We expect serverAddr to have been assigned a value by App.tsx before
             this state action is ever dispatched.
     
             This overload of .performUserAuthorization() requires a callback
@@ -77,6 +77,7 @@ export function Login(): JSX.Element {
             returns in addition to an AccessToken; thus, I will give it a callback
             that does nothing. */
             SpotifyApi.performUserAuthorization(
+                // TODO: Change to using Docker secrets
                 import.meta.env.VITE_CLIENT_ID,
                 serverAddr,
                 Scopes.userDetails.concat(Scopes.userRecents),

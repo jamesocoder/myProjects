@@ -27,6 +27,7 @@ const slice = createSlice({
         logout(state) {
             SpotifyApi
                 .withAccessToken(
+                    // TODO: Change to using Docker secrets
                     import.meta.env.VITE_CLIENT_ID,
                     state.accessToken
                 )

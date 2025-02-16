@@ -1,0 +1,21 @@
+name: shuffle
+
+secrets:
+  secrets:
+    file: secrets.json
+
+services:
+  front:
+    environment:
+      HOST: localhost
+      PORT: 8080
+      BACKEND: http://localhost:8081
+    build:
+      context: ./front
+    secrets:
+      - source: secrets
+        target: /front/secrets
+    ports:
+      - "8080:8080"
+    user: node
+    init: true

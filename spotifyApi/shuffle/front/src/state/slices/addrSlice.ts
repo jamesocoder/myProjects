@@ -6,8 +6,8 @@ const slice = createSlice({
     reducers: {
         initAddr(state) {
             state.addr = (() => {
-                return `${import.meta.env.DEV ? 'http' : 'https'}://` +
-                    `${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}`;
+                return `${process.env.NODE_ENV === 'development' ? 'http' : 'https'}://` +
+                    `${process.env.HOST}:${process.env.PORT}`;
             })();
         }
     }

@@ -1,0 +1,8 @@
+# Ignore files that aren't necessary to the build process
+# Source: https://docs.docker.com/build/concepts/context/#dockerignore-files
+node_modules
+.env
+.eslintrc.cjs
+.gitignore
+Dockerfile
+*.md
