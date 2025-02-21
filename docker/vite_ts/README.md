@@ -2,15 +2,15 @@
 
 There aren't many tutorials out there explaining how Docker and Vite interact with each other when it comes to passing environment variables throughout the build and deployment process.
 
-Vite doesn't seem to play well with Docker containers.  It can build just fine from within a container, but using any other command results in an error with Vite being restricted from accessing the vite.config.ts file.
+Vite doesn't seem to play well with Docker containers.  It can build just fine from within a container, but using any other command results in an error because Vite is restricted from accessing the vite.config.ts file.
 
-This means we can't use `vite` for HMR when trying to develop with a container; (**TODO**) we'd have to look into using Docker compose's watch feature instead.
+This means we can't use `vite` for Hot Module Replacement when trying to develop with a container; (**TODO**) we'd have to look into using Docker compose's watch feature instead.
 
 We also can't use `vite preview` to serve built projects either.  We have to rely on [http-server](https://github.com/http-party/http-server) instead.
 
 ## Understanding how environment variables are injected
 
-Docker is capable of injecting variable values at either build time or run time and, when using Vite, it matters when it does so.  Vite hard-codes any `import.meta.env...` references we have in our code with the values we provide at *build* time.
+Docker is capable of injecting variable values at either build time or run time and when using Vite, it matters when it does so.  Vite hard-codes any `import.meta.env...` references we have in our code using the values we provide at *build* time.
 
 With Docker, we can only supply build-time values from within Dockerfiles.  We can get away with storing our values in a compose.yaml file if we [call for ARGs in our Dockerfile](./Dockerfile) and [provide them within a compose service's `build` element](./compose.yaml).
 
