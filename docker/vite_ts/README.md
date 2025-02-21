@@ -18,7 +18,7 @@ Run-time environment variables don't seem to be accessible by Node apps at all, 
 
 ## Multi-stage builds in Dockerfiles
 
-This project also demos how we can create lean Docker images by separating a Node app's build tools from its final server image (showcased in the [Dockerfile](./Dockerfile)).  The only files the final server image needs are found in the `./dist` folder and a global installation of `http-server`.
+This project also demos how we can create lean Docker images by separating a Node app's build tools from its final server image (showcased in the [Dockerfile](./Dockerfile)).  The only files the final server image needs are found in the `./dist` folder after a `yarn build` command and a global installation of `http-server`.
 
 ## How to run
 
