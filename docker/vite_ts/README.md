@@ -12,7 +12,7 @@ We also can't use `vite preview` to serve built projects either.  We have to rel
 
 Docker is capable of injecting variable values at either build time or run time and when using Vite, it matters when it does so.  Vite hard-codes any `import.meta.env...` references we have in our code using the values we provide at *build* time.
 
-With Docker, we can only supply build-time values from within Dockerfiles.  We can get away with storing our values in a compose.yaml file if we [call for ARGs in our Dockerfile](./Dockerfile) and [provide them within a compose service's `build` element](./compose.yaml).
+With Docker, we can only supply *build-time* values from within Dockerfiles.  In a compose.yaml file, we typically can only supply *run-time* values through a service's environment element.  We can work around this limitation if we [call for ARGs in our Dockerfile](./Dockerfile) and [provide them within a compose service's `build` element](./compose.yaml).
 
 Run-time environment variables don't seem to be accessible by Node apps at all, so a compose service's environment element is useless for this context.  This is different behavior from [docker/secrets's](../secrets/) demo, notably because it uses a Node *script* instead of an app.
 
