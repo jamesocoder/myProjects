@@ -4,9 +4,14 @@ There aren't many tutorials out there explaining how Docker and Vite interact wi
 
 Vite doesn't seem to play well with Docker containers.  It can build just fine from within a container, but using any other command results in an error because Vite is restricted from accessing the vite.config.ts file.
 
-This means we can't use `vite` for Hot Module Replacement when trying to develop with a container; (**TODO**) we'd have to look into using Docker compose's watch feature instead.
+This means we can't use `vite` for Hot Module Replacement when trying to develop with a container; we'd have to look into using Docker compose's watch feature instead.
 
 We also can't use `vite preview` to serve built projects either.  We have to rely on [http-server](https://github.com/http-party/http-server) instead.
+
+## Branch Goals
+
+- Add compose watch demonstration to the project
+- Add secrets file access from the container demonostration to the project
 
 ## Understanding how environment variables are injected
 
