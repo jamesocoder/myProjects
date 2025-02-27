@@ -1,20 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 /* svg's can be imported with any arbitrary name.
 You don't have to match the source file name */
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
-import swapLogo from './assets/swapA.svg'
+import swapLogo from './assets/swapB.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
 
-  /* Log entire contents of the environment Vite loads to the browser's
-  console */
-  console.log(import.meta.env)
+  /* Log entire contents of the environment Vite loads to the browser's console.
+  All import.meta.env... references are replaced with hard-coded values during
+  Vite's build process */
+  useEffect(() => console.log(import.meta.env), []);
 
-  /* All import.meta.env... references are replaced with hard-coded values
-  during Vite's build process */
   return (
     <>
       <div>
@@ -40,7 +39,7 @@ function App() {
         </p>
         <ul>
           <li>
-            Edit <code>src/App.tsx</code> and save or change which "swap" asset is imported from
+            Edit <code>src/App.tsx</code>'s return or change which "swap" asset is imported from
             &nbsp;<code>src/assets/</code> to test compose watch's <strong>sync</strong> action.
           </li>
         </ul>
