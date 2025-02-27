@@ -14,18 +14,32 @@
 # Source:
 #  - https://github.com/nodejs/docker-node?tab=readme-ov-file#nodealpine
 #  - https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md
-FROM node:alpine AS builder
+FROM node:alpine AS dev-stage
 WORKDIR /app
+# Vite and its dependencies don't play nice with default file permissions
+# on the node:alpine image.  Install them first, then make their permissions
+# global, then proceed with installing the other dependencies.  Yarn's
+# subsequent installations won't overwrite the file permissions of already-
+# installed node_modules.
+COPY vite.json .
+RUN mv vite.json package.json && \
+    yarn install --no-lockfile && \
+    rm package.json && \
+    chmod -R 777 ./node_modules
 COPY package.json .
 RUN yarn install
 COPY . .
-# Cause leaner production behaviors from the build tools
-ENV NODE_ENV=production
 # Inject build-time environment variable values given as arguments
+# These values will persist in all child stages
 ARG VITE_HOST
 ENV VITE_HOST=${VITE_HOST}
 ARG VITE_PORT
 ENV VITE_PORT=${VITE_PORT}
+
+FROM dev-stage AS builder
+WORKDIR /app
+# Cause leaner production behaviors from the build tools
+ENV NODE_ENV=production
 RUN yarn build
 
 # Final stage prepares a global installation of http-server, then

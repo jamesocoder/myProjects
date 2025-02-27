@@ -4,14 +4,41 @@ There aren't many tutorials out there explaining how Docker and Vite interact wi
 
 Vite doesn't seem to play well with Docker containers.  It can build just fine from within a container, but using any other command results in an error because Vite is restricted from accessing the vite.config.ts file.
 
-This means we can't use `vite` for Hot Module Replacement when trying to develop with a container; we'd have to look into using Docker compose's watch feature instead.
+This means we can't use `vite` for Hot Module Replacement (HMR) when trying to develop with a container; we'd have to look into using Docker compose's watch feature instead.
 
 We also can't use `vite preview` to serve built projects either.  We have to rely on [http-server](https://github.com/http-party/http-server) instead.
 
 ## Branch Goals
 
-- Add compose watch demonstration to the project
-- Add secrets file access from the container demonostration to the project
+- Add compose watch demonstration
+- Add secrets file access from the container
+
+## How to run
+
+1. Install Docker
+2. Clone repo and open its directory up in a terminal
+3. Use `docker compose --profile prod up -d`
+4. Navigate to `localhost:8080` in a browser to see the page served by the container
+5. In the browser's developer console, you'll see an Object output showing what environment variables Vite has injected into the app
+6. Stop and clean out the project's files with `docker compose --profile prod down --rmi all`
+
+## Troubles with Vite and next steps
+
+`yarn dev` still does not work in our chosen linux container.
+
+I've solved the issue of Vite not having enough permissions to launch itself in the container by changing the file permissions of it and all of its dependencies. (See the [Dockerfile](./Dockerfile)'s first `COPY` and `RUN` statements in its `dev-stage`).
+
+Now, the issue is Vite is not serving up anything.  Docker compose's `watch` function is working for `--profile vite-dev`, syncing source file changes to the container, but Vite's HMR is not working and serving.
+
+A working `compose watch` demonstration was created during the development of this commit, but it involved the entire Dockerfile build -- not just the `dev-stage`.  Compose watch was capable of syncing source file changes and triggering a rebuild of the project for the server stage to serve.  While functional, this was missing the point of having Vite in the first place: quick HMR without needing to rebuild the entire project after every change.
+
+Docker's demo getting-started-todo-app uses the bulkier `node:20` image as its base.  It might be worth trying Vite with this image instead.  `node:alpine` might be missing some key linux component or have some setting configured wrong.
+
+## Selectively running services from a Docker compose.yaml file
+
+Individual services can be run with a `docker compose <service-name>` command.
+
+This project demonstrates how to define "profile" tags to operate a select group of services according to the given profile.
 
 ## Understanding how environment variables are injected
 
@@ -24,12 +51,3 @@ Run-time environment variables don't seem to be accessible by Node apps at all, 
 ## Multi-stage builds in Dockerfiles
 
 This project also demos how we can create lean Docker images by separating a Node app's build tools from its final server image (showcased in the [Dockerfile](./Dockerfile)).  The only files the final server image needs are found in the `./dist` folder and a global installation of `http-server`.
-
-## How to run
-
-1. Install Docker
-2. Clone repo and open its directory up in a terminal
-3. Use `docker compose up -d`
-4. Navigate to `localhost:8080` in a browser to see the page served by the container
-5. In the browser's developer console, you'll see an Object output showing what environment variables Vite has injected into the app
-6. Stop and clean out the project's files with `docker compose down --rmi all`

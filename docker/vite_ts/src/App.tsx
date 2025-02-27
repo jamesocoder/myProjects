@@ -1,6 +1,9 @@
 import { useState } from 'react'
+/* svg's can be imported with any arbitrary name.
+You don't have to match the source file name */
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
+import swapLogo from './assets/swap.svg'
 import './App.css'
 
 function App() {
@@ -18,6 +21,7 @@ function App() {
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
+        <img src={swapLogo} className="logo" alt="dynamic logo" />
         <a href="https://react.dev" target="_blank">
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
@@ -31,8 +35,15 @@ function App() {
         <p>{import.meta.env.VITE_HOST ?? 'HOST ENV variable not readable'}</p>
         <p>{import.meta.env.VITE_PORT ?? 'PORT ENV variable not readable'}</p>
         <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
+          If <code>docker compose up --watch</code> was used, reload the browser after
+          trying the following:
         </p>
+        <ul>
+          <li>
+            Edit <code>src/App.tsx</code> and save or swap the names of the "swap" assets in
+            &nbsp;<code>src/assets/</code> to test compose watch's <strong>sync</strong> action.
+          </li>
+        </ul>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more

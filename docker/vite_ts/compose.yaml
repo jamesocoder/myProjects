@@ -6,6 +6,44 @@ secrets:
 
 services:
   service1:
+    profiles:
+      - vite-dev
+    build:
+      context: .
+      # Build-time environment variable arguments must be
+      # passed to the Dockerfile in the given context here
+      args:
+        VITE_HOST: localhost
+        VITE_PORT: 8080
+      target: dev-stage
+    develop:
+      watch:
+        - path: ./src
+          action: sync
+          target: /app/src
+        - path: ./package.json
+          action: rebuild
+    secrets:
+      - source: secrets1
+        target: /app/secrets
+    ports:
+      - "8080:8080"
+    # Node's image maintainers advise using this premade user
+    # instead of the root user for security
+    user: node
+    # Node does not behave well when it is PID 0
+    # This property causes it to be PID 1
+    init: true
+    # The following two properties allow the container to be
+    # interacted with by keeping it running
+    stdin_open: true
+    tty: true
+    # Start Vite's hot module replacement function
+    command: ["yarn", "dev"]
+  
+  service2:
+    profiles:
+      - prod
     build:
       context: .
       # Build-time environment variable arguments must be
