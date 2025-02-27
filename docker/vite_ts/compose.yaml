@@ -5,15 +5,15 @@ secrets:
     file: secrets.json
 
 services:
-  service1:
+  development:
     profiles:
-      - vite-dev
+      - dev
     build:
       context: .
       # Build-time environment variable arguments must be
       # passed to the Dockerfile in the given context here
       args:
-        VITE_HOST: localhost
+        VITE_HOST: 0.0.0.0
         VITE_PORT: 8080
       target: dev-stage
     develop:
@@ -40,32 +40,53 @@ services:
     tty: true
     # Start Vite's hot module replacement function
     command: ["yarn", "dev"]
-  
-  service2:
+
+  production:
     profiles:
       - prod
     build:
       context: .
-      # Build-time environment variable arguments must be
-      # passed to the Dockerfile in the given context here
       args:
         VITE_HOST: localhost
         VITE_PORT: 8080
+      # If we don't specify a build target, all stages in the
+      # Dockerfile will be executed, with the final stage
+      # being our resulting image
     secrets:
       - source: secrets1
         target: /app/secrets
     ports:
       - "8080:8080"
-    # Node's image maintainers advise using this premade user
-    # instead of the root user for security
     user: node
-    # Node does not behave well when it is PID 0
-    # This property causes it to be PID 1
     init: true
-    # The following two properties allow the container to be
-    # interacted with by keeping it running
     stdin_open: true
     tty: true
     # It is assumed that the final image in the Dockerfile
     # has Node's http-server package installed globally
     command: ["http-server"]
+
+  preview:
+  # This service essentially does the same thing as "production"
+  # but uses Vite preview instead of http-server.  I would not
+  # recommend using this at all since Vite preview struggles
+  # with some extra file permissions and giving them slows down
+  # the build process.
+    profiles:
+      - preview
+    build:
+      context: .
+      args:
+        VITE_HOST: 0.0.0.0
+        VITE_PORT: 8080
+      target: builder
+    secrets:
+      - source: secrets1
+        target: /app/secrets
+    ports:
+      - "8080:8080"
+    user: node
+    init: true
+    stdin_open: true
+    tty: true
+    # Start Vite's build preview function
+    command: ["yarn", "preview"]

@@ -3,7 +3,7 @@ import { useState } from 'react'
 You don't have to match the source file name */
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
-import swapLogo from './assets/swap.svg'
+import swapLogo from './assets/swapA.svg'
 import './App.css'
 
 function App() {
@@ -26,7 +26,7 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
+      <h1>Docker + Vite + React + TypeScript</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
@@ -40,7 +40,7 @@ function App() {
         </p>
         <ul>
           <li>
-            Edit <code>src/App.tsx</code> and save or swap the names of the "swap" assets in
+            Edit <code>src/App.tsx</code> and save or change which "swap" asset is imported from
             &nbsp;<code>src/assets/</code> to test compose watch's <strong>sync</strong> action.
           </li>
         </ul>

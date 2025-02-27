@@ -10,33 +10,38 @@ We also can't use `vite preview` to serve built projects either.  We have to rel
 
 ## Branch Goals
 
-- Add compose watch demonstration
-- Add secrets file access from the container
+- [x] Add compose watch demonstration
+- [ ] Add secrets file access from the container
 
 ## How to run
 
 1. Install Docker
 2. Clone repo and open its directory up in a terminal
-3. Use `docker compose --profile prod up -d`
+3. Use a launch command:
+    - To run in development mode with Watch and HMR functionality, use either:
+        - `docker compose --profile dev up --watch`
+        - `docker compose up development --watch`
+    - To serve a build version of the project, use either:
+        - `docker compose --profile prod up -d`
+        - `docker compose up production`
+    - To use Vite locally without involving Docker, first use `yarn install` then either:
+        - `yarn dev`
+        - `yarn build` then `yarn preview` 
 4. Navigate to `localhost:8080` in a browser to see the page served by the container
 5. In the browser's developer console, you'll see an Object output showing what environment variables Vite has injected into the app
-6. Stop and clean out the project's files with `docker compose --profile prod down --rmi all`
+6. Stop and clean out the project's files with `docker compose <profile or service> down --rmi all`
 
-## Troubles with Vite and next steps
+## Vite troubles and their fixes
 
-`yarn dev` still does not work in our chosen linux container.
+`yarn dev` and `yarn preview` only work with a specific host value, `0.0.0.0`, in our chosen container environment (`node:alpine`).  It does not work with `localhost` as its value.  It could be because of the way recent versions of Node resolve domain names (see [vite.config server.host documentation](https://vite.dev/config/server-options.html#server-host)).
+
+The port values of either the host or the container can be to any non-reserved port at will.  They don't have to match, but I match them in this project for convenience.
 
 I've solved the issue of Vite not having enough permissions to launch itself in the container by changing the file permissions of it and all of its dependencies. (See the [Dockerfile](./Dockerfile)'s first `COPY` and `RUN` statements in its `dev-stage`).
 
-Now, the issue is Vite is not serving up anything.  Docker compose's `watch` function is working for `--profile vite-dev`, syncing source file changes to the container, but Vite's HMR is not working and serving.
-
-A working `compose watch` demonstration was created during the development of this commit, but it involved the entire Dockerfile build -- not just the `dev-stage`.  Compose watch was capable of syncing source file changes and triggering a rebuild of the project for the server stage to serve.  While functional, this was missing the point of having Vite in the first place: quick HMR without needing to rebuild the entire project after every change.
-
-Docker's demo getting-started-todo-app uses the bulkier `node:20` image as its base.  It might be worth trying Vite with this image instead.  `node:alpine` might be missing some key linux component or have some setting configured wrong.
-
 ## Selectively running services from a Docker compose.yaml file
 
-Individual services can be run with a `docker compose <service-name>` command.
+Specifically named services can be run with a `docker compose <service-name>` command.
 
 This project demonstrates how to define "profile" tags to operate a select group of services according to the given profile.
 

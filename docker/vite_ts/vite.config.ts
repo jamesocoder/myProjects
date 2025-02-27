@@ -13,8 +13,7 @@ export default defineConfig({
   server: {
     host: process.env.VITE_HOST,
     port: PORT,
-    strictPort: true,
-    open: true
+    strictPort: true
   },
   preview: {
     port: PORT
