@@ -101,13 +101,17 @@ services:
     secrets:
       - source: secrets1
         target: /app/secrets
+    # For some reason, the ports between the host and the
+    # container need to match in production.
     ports:
-      - "8081:8080"
+      - "8081:8081"
     user: node
     init: true
     stdin_open: true
     tty: true
-    command: ["http-server", "--cors", "--log-ip", "true"]
+    # Backend is a Node Application, not a web page, so it
+    # must be served by Node, not http-server
+    command: ["node", "main.cjs"]
 
   preview:
   # This service essentially does the same thing as "production"

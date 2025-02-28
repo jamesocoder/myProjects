@@ -11,5 +11,7 @@ server.use(cors({
 server.all('/', (req, res) => {res.sendStatus(400);});
 server.use(rtSecrets);
 
-if (import.meta.env.PROD)
+if (import.meta.env.PROD) {
+    console.log(`\nListening on ${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}\n`)
     server.listen(import.meta.env.VITE_PORT)
+}

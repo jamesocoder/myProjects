@@ -13,15 +13,17 @@ Vite doesn't seem to play well with this project's chosen environment (Node vers
 
 ## Backend WIP
 
-I've successfully created the backend, hosted it on a container, and polled it for a response.  The frontend is not yet coded to ping the backend though.  We have to do it manually. 
+I've successfully created the backend, hosted it on a container, and polled it for a response.  The frontend is not yet coded to ping the backend though.  We have to do it manually for now. 
 
 A major plugin [vite-plugin-node](https://github.com/axe-me/vite-plugin-node) hasn't been able to keep up with the latest web dev tooling updates.  It is flagged by tsc's type checking.  Vite 6 is mostly backwards compatible so we can still use it to build the project without issue if we skip tsc type checking.
 
-The current production build of the backend is not accepting a request from [Insomnia](https://insomnia.rest/download).  There might be some middleware that's missing from [main.ts](./back/src/main.ts).
+### How to test current backend container
 
-### How to test current backend container in dev mode
-
-First, build and start the container with `docker compose up dev-back -d`
+First, build and start the container with either:
+- `docker compose up dev-back -d`
+    - Note that although the container's Vite instance will say it's listening on port 8080, you'll still need to send requests to the host's port 8081.
+    - You can alter the backend's source code and Vite and Docker will dynamically rebuild and re-host the changes when using this command.
+- `docker compose up prd-back -d`
 
 Then, using something like `curl` in a shell or like Powershell, respectively:
 
@@ -43,7 +45,7 @@ $response = Invoke-WebRequest -Uri 'http://localhost:8081/secret' -Method POST -
 $response.Content
 ```
 
-This will print "secretValue" to the terminal, which the backend reads from the secrets file mounted by Docker compose.
+This will print "secretValue" to the terminal, which the backend reads from the secrets file mounted by Docker compose.  Note that the Powershell commands will create variables that will persist in the instance, `$headers` and `$response`.
 
 ## How to run
 

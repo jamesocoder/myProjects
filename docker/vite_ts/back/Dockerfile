@@ -25,16 +25,8 @@ WORKDIR /app
 # Cause leaner production behaviors from the build tools
 ENV NODE_ENV=production
 RUN yarn build
-# For some reason "vite preview" requires even more dependency file
-# permissions than the ones given when installing Vite in the dev-stage.
-# The following RUN command gives blanket permissions to cover whatever
-# this extra dependency is but greatly slows down the build process.
-#RUN chmod -R 777 ./node_modules
 
-# Final stage prepares a global installation of http-server, then
-# copies only the minimized app files from the build stage to a
-# clean image for a lean final deployment image.
 FROM node:alpine AS server
 WORKDIR /app
-RUN yarn global add http-server
-COPY --from=builder /app/dist .
+COPY --from=builder /app/dist /app/package.json /app/
+RUN yarn install --production
