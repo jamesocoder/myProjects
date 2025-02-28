@@ -8,6 +8,9 @@ Vite doesn't seem to play well with this project's chosen environment (Node vers
 
 - [x] Add compose watch demonstration
 - [ ] Add secrets file access from the container
+    - This does not seem possible.  Browser clients aren't allowed to read any files that aren't directly served to them, so Node's `fs` library is only for backend applications, not browser applications.  A secret file mounted to a container by Docker can't be read by any code executed by a browser.
+    - Next possible step forward is to create a backend container, mount the secrets there instead, serve it to the frontend container, then display it on the frontend.
+    - Secrets should be removed from the frontend once the backend is ready.  They're left in for now so I remember how to mount them.
 
 ## How to run
 
