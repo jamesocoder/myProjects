@@ -15,7 +15,11 @@ Vite doesn't seem to play well with this project's chosen environment (Node vers
 
 I've successfully created the backend, hosted it on a container, and polled it for a response.  The frontend is not yet coded to ping the backend though.  We have to do it manually for now. 
 
-A major plugin [vite-plugin-node](https://github.com/axe-me/vite-plugin-node) hasn't been able to keep up with the latest web dev tooling updates.  It is flagged by tsc's type checking.  Vite 6 is mostly backwards compatible so we can still use it to build the project without issue if we skip tsc type checking.
+A major plugin for this project, [vite-plugin-node](https://github.com/axe-me/vite-plugin-node), hasn't been able to keep up with the latest web dev tooling updates.  It is flagged by tsc's type checking.  Vite 6 is mostly backwards compatible so we can still use it to build the project without issue if we skip tsc type checking.
+
+![size comparison](./imgs/001.jpg)
+
+Comparing image sizes in the above image, we can see that the base image, node:alpine, is very slim.  The production image of the frontend is only ~10mb larger.  The backend's production image is almost half a gb larger than the base image.  We only save ~50mb between the backend's development and production builds.
 
 ### How to test current backend container
 
