@@ -1,1 +1,2 @@
-secrets.json
+# Should not be ignored in a real project
+#secrets.json
