@@ -2,14 +2,14 @@ name: ViteDemo
 
 secrets:
   secrets1:
-    file: secrets.json
+    file: ./back/secrets.json
 
 services:
-  development:
+  dev-front:
     profiles:
       - dev
     build:
-      context: .
+      context: ./front/
       # Build-time environment variable arguments must be
       # passed to the Dockerfile in the given context here
       args:
@@ -18,14 +18,11 @@ services:
       target: dev-stage
     develop:
       watch:
-        - path: ./src
+        - path: ./front/src
           action: sync
           target: /app/src
-        - path: ./package.json
+        - path: ./front/package.json
           action: rebuild
-    secrets:
-      - source: secrets1
-        target: /app/secrets
     ports:
       - "8080:8080"
     # Node's image maintainers advise using this premade user
@@ -41,20 +38,17 @@ services:
     # Start Vite's hot module replacement function
     command: ["yarn", "dev"]
 
-  production:
+  prd-front:
     profiles:
-      - prod
+      - prd
     build:
-      context: .
+      context: ./front/
       args:
         VITE_HOST: localhost
         VITE_PORT: 8080
       # If we don't specify a build target, all stages in the
       # Dockerfile will be executed, with the final stage
       # being our resulting image
-    secrets:
-      - source: secrets1
-        target: /app/secrets
     ports:
       - "8080:8080"
     user: node
@@ -72,9 +66,9 @@ services:
   # with some extra file permissions and giving them slows down
   # the build process.
     profiles:
-      - preview
+      - prv
     build:
-      context: .
+      context: ./front/
       args:
         VITE_HOST: 0.0.0.0
         VITE_PORT: 8080

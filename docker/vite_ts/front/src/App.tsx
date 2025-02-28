@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 You don't have to match the source file name */
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
-import swapLogo from './assets/swapB.svg'
+import swapLogo from './assets/swapA.svg'
 import './App.css'
 
 function App() {
