@@ -19,29 +19,33 @@ A major plugin [vite-plugin-node](https://github.com/axe-me/vite-plugin-node) ha
 
 ### How to test current backend container
 
-First, build and start the container with either:
+**First**, build and start the container with either:
 - `docker compose up dev-back -d`
     - Note that although the container's Vite instance will say it's listening on port 8080, you'll still need to send requests to the host's port 8081.
     - You can alter the backend's source code and Vite and Docker will dynamically rebuild and re-host the changes when using this command.
 - `docker compose up prd-back -d`
+    - This will host a build project using Node instead of Vite
+    - The image size difference isn't very large because we still need to include run-time dependencies in the final image
+    - Since the backend is so bloated, this may be a case for some developer's preference for golang or rust
 
-Then, using something like `curl` in a shell or like Powershell, respectively:
+**Then**, using something like `curl` in a shell or like Powershell, respectively:
 
 ```bash
-curl --request POST \
+curl \
   --url http://localhost:8081/secret \
+  --request POST \
   --header 'Content-Type: application/json' \
-  --data '{
-	"name": "SECRET"
-}'
+  --data '{"name": "SECRET"}'
 ```
 
 ```powershell
 $headers=@{}
 $headers.Add("Content-Type", "application/json")
-$response = Invoke-WebRequest -Uri 'http://localhost:8081/secret' -Method POST -Headers $headers -ContentType 'application/json' -Body '{
-	"name": "SECRET"
-}'
+$response = Invoke-WebRequest `
+    -Uri 'http://localhost:8081/secret' `
+    -Method POST `
+    -Headers $headers `
+    -Body '{"name": "SECRET"}'
 $response.Content
 ```
 

@@ -29,4 +29,4 @@ RUN yarn build
 FROM node:alpine AS server
 WORKDIR /app
 COPY --from=builder /app/dist /app/package.json /app/
-RUN yarn install --production
+RUN yarn install --production=true
