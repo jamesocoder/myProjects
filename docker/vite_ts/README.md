@@ -58,10 +58,10 @@ This will print "secretValue" to the terminal, which the backend reads from the 
 3. Use a launch command:
     - To run in development mode with Watch and HMR functionality, use either:
         - `docker compose --profile dev up --watch`
-        - `docker compose up development --watch`
+        - `docker compose up dev-front --watch`
     - To serve a build version of the project using [http-server](https://github.com/http-party/http-server), use either:
-        - `docker compose --profile prod up -d`
-        - `docker compose up production`
+        - `docker compose --profile prd up -d`
+        - `docker compose up prd-front`
     - To use Vite locally without involving Docker, first use `yarn install` then either:
         - `yarn dev`
         - `yarn build` then `yarn preview` 
