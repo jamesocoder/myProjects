@@ -9,9 +9,10 @@ This project demonstrates how to set up both a frontend and backend project that
 - Future potential for scalability through Kubernetes
 - Potential for self-healing and self-coordinated systems through Docker compose
 
-**Potential Future Project Goals**
-- Divide frontend's [app.jsx](./front/src/App.tsx) into components
-- Reduce duplication of shared setups in [compose.yaml](./compose.yaml) with [extends](https://docs.docker.com/reference/compose-file/services/#extends) or [fragments](https://docs.docker.com/reference/compose-file/fragments/) 
+## Branch Goals
+
+- [ ] Divide frontend's [app.jsx](./front/src/App.tsx) into components
+- [ ] Reduce duplication of shared setups in [compose.yaml](./compose.yaml) with [extends](https://docs.docker.com/reference/compose-file/services/#extends) or [fragments](https://docs.docker.com/reference/compose-file/fragments/) 
 
 ## How to run
 
