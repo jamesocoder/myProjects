@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 /* svg's can be imported with any arbitrary name.
 You don't have to match the source file name */
 import reactLogo from './assets/react.svg'
@@ -7,7 +7,17 @@ import swapLogo from './assets/swapA.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [secret, setSecret] = useState('');
+
+  const getSecret = useCallback(() => {
+    if (!secret) {
+      // TODO: Req secret from backend and use setSecret()
+      setSecret('something');
+    } else {
+      setSecret('');
+    }
+  }, [secret, setSecret]);
 
   /* Log entire contents of the environment Vite loads to the browser's console.
   All import.meta.env... references are replaced with hard-coded values during
@@ -33,6 +43,11 @@ function App() {
         <p>{'import.meta.env.DEV variable is ' + (import.meta.env.DEV ? 'true' : 'falsey')}</p>
         <p>{import.meta.env.VITE_HOST ?? 'HOST ENV variable not readable'}</p>
         <p>{import.meta.env.VITE_PORT ?? 'PORT ENV variable not readable'}</p>
+        <span onClick={getSecret} className='secret'>{
+          !secret ?
+          'Click this text to attempt to retrieve a secret from the server.' :
+          `The secret is: ${secret} -- Click this text to reset the secret state variable.`
+        }</span>
         <p>
           If <code>docker compose up --watch</code> was used, reload the browser after
           trying the following:
