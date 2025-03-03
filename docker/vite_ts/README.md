@@ -1,30 +1,119 @@
 # Practice using Docker and Vite together
 
-There aren't many tutorials out there explaining how Docker and Vite interact with each other when it comes to passing environment variables throughout the build and deployment process.
+There aren't many tutorials out there explaining how Docker and Vite interact with each other when it comes to passing environment variables throughout the build and deployment process and how they handle networking.
 
-Vite doesn't seem to play well with Docker containers.  It can build just fine from within a container, but using any other command results in an error because Vite is restricted from accessing the vite.config.ts file.
+This project demonstrates how to set up both a frontend and backend project that utilizes Docker Compose Watch and Vite HMR.  These two dev tools enable:
+- Faster development by being able to see the effect of code changes without having to wait for comprehensive rebuilds
+- A streamlined, more efficient build chain managed by Vite and Docker caches
+- A standardized dev environment provided by Docker's images
+- Future potential for scalability through Kubernetes
+- Potential for self-healing and self-coordinated systems through Docker compose
 
-This means we can't use `vite` for Hot Module Replacement when trying to develop with a container; (**TODO**) we'd have to look into using Docker compose's watch feature instead.
-
-We also can't use `vite preview` to serve built projects either.  We have to rely on [http-server](https://github.com/http-party/http-server) instead.
-
-## Understanding how environment variables are injected
-
-Docker is capable of injecting variable values at either build time or run time and when using Vite, it matters when it does so.  Vite hard-codes any `import.meta.env...` references we have in our code using the values we provide at *build* time.
-
-With Docker, we can only supply *build-time* values from within Dockerfiles.  In a compose.yaml file, we typically can only supply *run-time* values through a service's environment element.  We can work around this limitation if we [call for ARGs in our Dockerfile](./Dockerfile) and [provide them within a compose service's `build` element](./compose.yaml).
-
-Run-time environment variables don't seem to be accessible by Node apps at all, so a compose service's environment element is useless for this context.  This is different behavior from [docker/secrets's](../secrets/) demo, notably because it uses a Node *script* instead of an app.
-
-## Multi-stage builds in Dockerfiles
-
-This project also demos how we can create lean Docker images by separating a Node app's build tools from its final server image (showcased in the [Dockerfile](./Dockerfile)).  The only files the final server image needs are found in the `./dist` folder after a `yarn build` command and a global installation of `http-server`.
+**Potential Future Project Goals**
+- Divide frontend's [app.jsx](./front/src/App.tsx) into components
+- Reduce duplication of shared setups in [compose.yaml](./compose.yaml) with [extends](https://docs.docker.com/reference/compose-file/services/#extends) or [fragments](https://docs.docker.com/reference/compose-file/fragments/) 
 
 ## How to run
 
 1. Install Docker
 2. Clone repo and open its directory up in a terminal
-3. Use `docker compose up -d`
-4. Navigate to `localhost:8080` in a browser to see the page served by the container
+3. Use a launch command:
+    - To run in development mode with Docker Compose Watch and Vite HMR functionality, use:
+        - `docker compose --profile dev up --watch`
+    - To serve a built version of the project using [http-server](https://github.com/http-party/http-server) on the frontend and Node on the backend, use:
+        - `docker compose --profile prd up -d`
+    - To use Vite locally without involving Docker:
+        1. `yarn install` in both the ./front and ./back directories
+        2. `yarn dev` in one terminal for each for ./front and ./back
+    - To build and serve the project locally:
+        1. Install Node
+        2. `yarn build` both ./front and ./back directories
+        3. Copy the backend's [secrets.json](./back//secrets.json) to `./back/dist/` and remove the `.json` extension from the filename
+        4. Serve the backend from `./dist` with `Node main.cjs`
+        3. Host the frontend with either `yarn preview` or `npx http-server ./dist -p 8080`
+4. Navigate to [localhost:8080](http://localhost:8080) in a browser to see the page served by the container
 5. In the browser's developer console, you'll see an Object output showing what environment variables Vite has injected into the app
-6. Stop and clean out the project's files with `docker compose down --rmi all`
+7. Follow directions on the webpage to test out containerized HMR and container secrets handling
+6. Stop and clean out the compose project with `docker compose --profile <dev/prd> down --rmi all`
+
+## How to test the backend container without a frontend
+
+**First**, build and start the container with either:
+- `docker compose up dev-back -d`
+    - You can alter the backend's source code and Vite and Docker will dynamically rebuild and re-host the changes when using this command.
+    - Note that the container's Vite instance prints the port it's serving through from the *container's* perspective.  Pay attention to what host port is providing a connection to the container in the [compose.yaml](./compose.yaml) file.
+- `docker compose up prd-back -d`
+    - This will host a built backend using Node instead of Vite
+    - The image size difference isn't very large because we still need to include run-time dependencies in the final image
+    - Since the backend is so bloated, this may be a reason for some developer's preference for golang or rust
+
+**Then**, using something like Powershell or `curl` in a shell, respectively:
+
+```powershell
+$headers=@{}
+$headers.Add("Content-Type", "application/json")
+$response = Invoke-WebRequest `
+    -Uri 'http://localhost:8081/secret' `
+    -Method POST `
+    -Headers $headers `
+    -Body '{"name": "SECRET"}'
+$response.Content
+```
+
+```bash
+curl \
+  --url http://localhost:8081/secret \
+  --request POST \
+  --header 'Content-Type: application/json' \
+  --data '{"name": "SECRET"}'
+```
+
+This will print "secretValue" to the terminal, which the backend reads from the secrets file mounted by Docker compose.  Note that the Powershell commands will create variables that will persist in the terminal instance, `$headers` and `$response`.
+
+## Handling secrets
+
+Secrets should't be mounted by Docker to the frontend.  A browser is incapable of accessing any files that aren't directly served to them.  Node's `fs` library is only usable by backend Node applications, not browser clients.
+
+This project demonstrates a possible solution for storing secrets in the application.  The frontend on `localhost:8080` has to retrieve secrets from the backend Node application, which [*can* read mounted files](./back/src/api/secrets.ts), by sending a request to `localhost:8081/secret`.  Not that these ports are the *host's* ports, not the container's ports.
+
+## Networking issues
+
+The [compose.yaml network](https://docs.docker.com/reference/compose-file/networks/) feature isn't very useful for this application.  Docker networks are closed networks, but when we access the application from our browser, we're trying to connect from outside of that closed network and we end up blocked.  When requesting a secret in the browser, the frontend redirects the browser client's request to the backend, which is treated as a communication from outside of the closed network.  Because of this, both the frontend and the backend needs to be open to outside connections, meaning we need to specify ports for both of them.  We can't use Docker's `expose`.
+
+This means that the backend needs to have some sort of security measure to block unwanted requesters from its secrets.  The Express.js CORS middleware could be a part of this security solution.  With CORS, we'd only allow requests routed by the frontend to access the backend.
+
+To get a Docker network to work, the communications between services need to be strictly between those services.  The service that exposes itself to outside connections needs capabilities that typical Node web apps aren't allowed.
+
+Switching port numbers can sometimes cause issues with Vite.  When changing them, make sure to check what container port Vite ends up using by inspecting the container's logs and that `compose.yaml` correctly connects it to the expected host port.
+
+## Vite troubles and their fixes
+
+Vite doesn't seem to play well with this project's chosen environment (Node version, Docker base image, etc.) out of the box.  It can build just fine from within a container, but using any other command results in an error because Vite is restricted from accessing various packages in node_modules when it tries to run.  I've solved this issue of Vite not having enough permissions to launch itself in the container by changing the file permissions of it and all of its dependencies. (See the [Dockerfile](./front/Dockerfile)'s first `COPY` and `RUN` statements in its `dev-stage`).
+
+`yarn dev` and `yarn preview` only work with a specific host value, `0.0.0.0`, in our chosen container environment (`node:alpine`).  It does not work with `localhost` as its value.  It could be because of the way recent versions of Node resolve domain names (see [vite.config server.host documentation](https://vite.dev/config/server-options.html#server-host)).
+
+The port values of either the host or the container can seemingly be changed to any non-reserved port at will.  They don't have to match, but I match them in this project for convenience.
+
+A major plugin for this project's backend, [vite-plugin-node](https://github.com/axe-me/vite-plugin-node), hasn't been able to keep up with the latest web dev tooling updates.  It is flagged by tsc's type checking.  Vite 6 is mostly backwards compatible so we can still use it to build the project without issue if we skip tsc type checking.  I removed the tsc step from the "build" script in [./back/package.json](./back/package.json); it is preserved in the "build-strict" script.
+
+## Selectively running services from a Docker compose.yaml file
+
+Specifically named services can be run with a `docker compose <command> <service-name>` command.  If a service has any dependencies named in its `depends_on:` attribute, those services will be built even if they weren't named in the command.
+
+This project demonstrates how to define "profile" tags to operate a select group of services.
+
+## Understanding how environment variables are injected
+
+Docker is capable of injecting variable values at either build time or run time and when using Vite, it matters when it does so.  Vite hard-codes any `import.meta.env...` references we have in our code using the values we provide at *build* time.
+
+With Docker, we can only supply build-time values from within Dockerfiles.  We can get away with storing our values in a compose.yaml file if we [call for ARGs in our Dockerfile](./front/Dockerfile) and [provide them within a compose service's `build` element](./compose.yaml).
+
+Run-time environment variables don't seem to be accessible by Node apps, so a compose service's environment attribute is useless for this context.  This is different behavior from [docker/secrets's](../secrets/) demo, notably because it uses a Node *script* instead of an app.
+
+## Multi-stage builds in Dockerfiles
+
+This project also demos how we can create lean Docker images by separating a Node app's build tools from its final server image (showcased in the [Dockerfile](./front/Dockerfile)).  The only files the final server image needs are found in the `./dist` folder and whatever it needs to serve those files.
+
+![size comparison](./imgs/001.jpg)
+
+Comparing image sizes in the above image, we can see that the base image, node:alpine, is very slim.  The production image of the frontend is only ~10mb larger.  The backend's production image is almost half a gb larger than the base image.  We only save ~50mb between the backend's development and production builds.

@@ -2,22 +2,32 @@ name: ViteDemo
 
 secrets:
   secrets1:
-    file: secrets.json
+    file: ./back/secrets.json
 
 services:
-  service1:
+  dev-front:
+    profiles:
+      - dev
+    depends_on:
+      - dev-back
+    ports:
+      - "8080:8080"
     build:
-      context: .
+      context: ./front/
       # Build-time environment variable arguments must be
       # passed to the Dockerfile in the given context here
       args:
-        VITE_HOST: localhost
+        VITE_HOST: 0.0.0.0
         VITE_PORT: 8080
-    secrets:
-      - source: secrets1
-        target: /app/secrets
-    ports:
-      - "8080:8080"
+        VITE_BACKEND: http://localhost:8081
+      target: dev-stage
+    develop:
+      watch:
+        - path: ./front/src
+          action: sync
+          target: /app/src
+        - path: ./front/package.json
+          action: rebuild
     # Node's image maintainers advise using this premade user
     # instead of the root user for security
     user: node
@@ -28,6 +38,104 @@ services:
     # interacted with by keeping it running
     stdin_open: true
     tty: true
+    # Start Vite's hot module replacement function
+    command: ["yarn", "dev"]
+
+  prd-front:
+    profiles:
+      - prd
+    depends_on:
+      - prd-back
+    ports:
+      - "8080:8080"
+    build:
+      context: ./front/
+      args:
+        VITE_HOST: localhost
+        VITE_PORT: 8080
+        VITE_BACKEND: http://localhost:8081
+      # If we don't specify a build target, all stages in the
+      # Dockerfile will be executed, with the final stage
+      # being our resulting image
+    user: node
+    init: true
+    stdin_open: true
+    tty: true
     # It is assumed that the final image in the Dockerfile
     # has Node's http-server package installed globally
     command: ["http-server"]
+
+  dev-back:
+    profiles:
+      - dev
+    ports:
+      - "8081:8080"
+    build:
+      context: ./back/
+      args:
+        VITE_HOST: 0.0.0.0
+        VITE_PORT: 8080
+        VITE_FRONTEND: http://localhost:8080
+      target: dev-stage
+    secrets:
+      - source: secrets1
+        target: /app/secrets
+    develop:
+      watch:
+        - path: ./back/src
+          action: sync
+          target: /app/src
+        - path: ./back/package.json
+          action: rebuild
+    user: node
+    init: true
+    stdin_open: true
+    tty: true
+    command: ["yarn", "dev"]
+
+  prd-back:
+    profiles:
+      - prd
+    # For some reason, the ports between the host and the
+    # container need to match in production.
+    ports:
+      - "8081:8081"
+    build:
+      context: ./back/
+      args:
+        VITE_HOST: localhost
+        VITE_PORT: 8081
+        VITE_FRONTEND: http://localhost:8080
+    secrets:
+      - source: secrets1
+        target: /app/secrets
+    user: node
+    init: true
+    stdin_open: true
+    tty: true
+    # Backend is a Node Application, not a web page, so it
+    # must be served by Node, not http-server
+    command: ["node", "main.cjs"]
+
+  preview:
+  # This service essentially does the same thing as "production"
+  # but uses Vite preview instead of http-server.  I would not
+  # recommend using this at all since Vite preview struggles
+  # with some extra file permissions and giving them slows down
+  # the build process.
+    profiles:
+      - prv
+    build:
+      context: ./front/
+      args:
+        VITE_HOST: 0.0.0.0
+        VITE_PORT: 8080
+      target: builder
+    ports:
+      - "8080:8080"
+    user: node
+    init: true
+    stdin_open: true
+    tty: true
+    # Start Vite's build preview function
+    command: ["yarn", "preview"]

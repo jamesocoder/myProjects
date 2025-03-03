@@ -1,5 +1,4 @@
-secrets.json
-yarn.lock
+*yarn.lock
 
 # Logs
 logs
