@@ -4,20 +4,24 @@ You don't have to match the source file name */
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import swapLogo from './assets/swapA.svg'
+import axios from 'axios'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0);
   const [secret, setSecret] = useState('');
+  const axBack = axios.create({baseURL: import.meta.env.VITE_BACKEND});
 
   const getSecret = useCallback(() => {
     if (!secret) {
-      // TODO: Req secret from backend and use setSecret()
-      setSecret('something');
+      // Req secret from backend and use setSecret()
+      axBack.post('/secret', {name: 'SECRET'})
+        .then(res => setSecret(res.data))
+        .catch(err => console.error(err));
     } else {
       setSecret('');
     }
-  }, [secret, setSecret]);
+  }, [secret, setSecret, axBack]);
 
   /* Log entire contents of the environment Vite loads to the browser's console.
   All import.meta.env... references are replaced with hard-coded values during

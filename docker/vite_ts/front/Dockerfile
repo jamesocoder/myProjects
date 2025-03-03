@@ -29,12 +29,15 @@ RUN mv vite.json package.json && \
 COPY package.json .
 RUN yarn install
 COPY . .
+#RUN apk add curl # Uncomment to enable curl requests from frontend dev container
 # Inject build-time environment variable values given as arguments
 # These values will persist in all child stages
 ARG VITE_HOST
 ENV VITE_HOST=${VITE_HOST}
 ARG VITE_PORT
 ENV VITE_PORT=${VITE_PORT}
+ARG VITE_BACKEND
+ENV VITE_BACKEND=${VITE_BACKEND}
 
 FROM dev-stage AS builder
 WORKDIR /app

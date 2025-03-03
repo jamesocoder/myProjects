@@ -8,6 +8,7 @@ https://vite.dev/guide/env-and-mode.html#intellisense-for-typescript */
 interface ImportMetaEnv {
     readonly VITE_HOST: string
     readonly VITE_PORT: number
+    readonly VITE_BACKEND: string
 }
 
 interface ImportMeta {

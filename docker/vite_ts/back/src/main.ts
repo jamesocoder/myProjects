@@ -4,6 +4,7 @@ import { routes as rtSecrets } from './api/secrets.js';
 
 export const server: Application = express();
 
+// Use cors() with no arguments to allow all origins
 server.use(cors({
     origin: import.meta.env.VITE_FRONTEND
 }));
