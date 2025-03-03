@@ -4,7 +4,7 @@ There aren't many tutorials out there explaining how Docker and Vite interact wi
 
 This project demonstrates how to set up both a frontend and backend project that utilizes Docker Compose Watch and Vite HMR.  These two dev tools enable:
 - Faster development by being able to see the effect of code changes without having to wait for comprehensive rebuilds
-- A streamlined build chain managed by Vite
+- A streamlined, more efficient build chain managed by Vite and Docker caches
 - A standardized dev environment provided by Docker's images
 - Future potential for scalability through Kubernetes
 - Potential for self-healing and self-coordinated systems through Docker compose
@@ -18,8 +18,10 @@ This project demonstrates how to set up both a frontend and backend project that
 1. Install Docker
 2. Clone repo and open its directory up in a terminal
 3. Use a launch command:
-    - To run in development mode with Docker Compose Watch and Vite HMR functionality, use `docker compose --profile dev up --watch`
-    - To serve a built version of the project using [http-server](https://github.com/http-party/http-server) on the frontend and Node on the backend, use: `docker compose --profile prd up -d`
+    - To run in development mode with Docker Compose Watch and Vite HMR functionality, use:
+        - `docker compose --profile dev up --watch`
+    - To serve a built version of the project using [http-server](https://github.com/http-party/http-server) on the frontend and Node on the backend, use:
+        - `docker compose --profile prd up -d`
     - To use Vite locally without involving Docker:
         1. `yarn install` in both the ./front and ./back directories
         2. `yarn dev` in one terminal for each for ./front and ./back
@@ -27,11 +29,11 @@ This project demonstrates how to set up both a frontend and backend project that
         1. Install Node
         2. `yarn build` both ./front and ./back directories
         3. Copy the backend's [secrets.json](./back//secrets.json) to `./back/dist/` and remove the `.json` extension from the filename
-        4. Serve the backend with from `./dist` with `Node main.cjs`
+        4. Serve the backend from `./dist` with `Node main.cjs`
         3. Host the frontend with either `yarn preview` or `npx http-server ./dist -p 8080`
-4. Navigate to `localhost:8080` in a browser to see the page served by the container
+4. Navigate to [localhost:8080](http://localhost:8080) in a browser to see the page served by the container
 5. In the browser's developer console, you'll see an Object output showing what environment variables Vite has injected into the app
-7. Follow directions on the page to test out containerized HMR and container secrets handling
+7. Follow directions on the webpage to test out containerized HMR and container secrets handling
 6. Stop and clean out the compose project with `docker compose --profile <dev/prd> down --rmi all`
 
 ## How to test the backend container without a frontend
@@ -39,11 +41,11 @@ This project demonstrates how to set up both a frontend and backend project that
 **First**, build and start the container with either:
 - `docker compose up dev-back -d`
     - You can alter the backend's source code and Vite and Docker will dynamically rebuild and re-host the changes when using this command.
-    - Note that although the container's Vite instance prints the port it's serving through from the *container's* perspective.  Pay attention to what host port is providing a connection to the container in the [compose.yaml](./compose.yaml) file.
+    - Note that the container's Vite instance prints the port it's serving through from the *container's* perspective.  Pay attention to what host port is providing a connection to the container in the [compose.yaml](./compose.yaml) file.
 - `docker compose up prd-back -d`
-    - This will host a built project using Node instead of Vite
+    - This will host a built backend using Node instead of Vite
     - The image size difference isn't very large because we still need to include run-time dependencies in the final image
-    - Since the backend is so bloated, this may be a case for some developer's preference for golang or rust
+    - Since the backend is so bloated, this may be a reason for some developer's preference for golang or rust
 
 **Then**, using something like Powershell or `curl` in a shell, respectively:
 
@@ -66,21 +68,23 @@ curl \
   --data '{"name": "SECRET"}'
 ```
 
-This will print "secretValue" to the terminal, which the backend reads from the secrets file mounted by Docker compose.  Note that the Powershell commands will create variables that will persist in the instance, `$headers` and `$response`.
+This will print "secretValue" to the terminal, which the backend reads from the secrets file mounted by Docker compose.  Note that the Powershell commands will create variables that will persist in the terminal instance, `$headers` and `$response`.
 
 ## Handling secrets
 
-Secrets can't be mounted by Docker to the frontend.  A browser is incapable of accessing any files that aren't directly served to them.  Node's `fs` library is only usable by backend Node applications, not browser clients.
+Secrets should't be mounted by Docker to the frontend.  A browser is incapable of accessing any files that aren't directly served to them.  Node's `fs` library is only usable by backend Node applications, not browser clients.
 
-This project demonstrates a possible solution for storing secrets in the application.  The frontend on `localhost:8080` has to retrieve secrets from the backend Node application, which *can* read mounted files, by sending a request to `localhost:8081/secret`.  Not that these ports are the *host's* ports, not the container's ports.
+This project demonstrates a possible solution for storing secrets in the application.  The frontend on `localhost:8080` has to retrieve secrets from the backend Node application, which [*can* read mounted files](./back/src/api/secrets.ts), by sending a request to `localhost:8081/secret`.  Not that these ports are the *host's* ports, not the container's ports.
 
 ## Networking issues
 
-The compose.yaml [network](https://docs.docker.com/reference/compose-file/networks/) feature isn't very useful for this application.  Docker networks are closed networks, but when we access the application from our browser, we're trying to connect from outside of that closed network and we end up blocked.  When requesting a secret in the browser, the frontend redirects the browser client's request to the backend, which is treated as a communication from outside of the closed network.  Because of this, both the frontend and the backend needs to be open to outside connections, meaning we need to specify ports for both of them.  We can't use Docker's `expose`.
+The [compose.yaml network](https://docs.docker.com/reference/compose-file/networks/) feature isn't very useful for this application.  Docker networks are closed networks, but when we access the application from our browser, we're trying to connect from outside of that closed network and we end up blocked.  When requesting a secret in the browser, the frontend redirects the browser client's request to the backend, which is treated as a communication from outside of the closed network.  Because of this, both the frontend and the backend needs to be open to outside connections, meaning we need to specify ports for both of them.  We can't use Docker's `expose`.
 
-This means that the backend needs to have some sort of security measure to block unwanted requesters from its secrets.  The Express.js CORS middleware might be part of this security solution.  With CORS, we'd only allow requests routed by the frontend to access the backend.
+This means that the backend needs to have some sort of security measure to block unwanted requesters from its secrets.  The Express.js CORS middleware could be a part of this security solution.  With CORS, we'd only allow requests routed by the frontend to access the backend.
 
-Switching port numbers can sometimes cause issues with Vite.  When changing them, make sure to check what container port Vite ends up using by inspecting the container's logs and that the `compose.yaml` correctly connects it to the right host port.
+To get a Docker network to work, the communications between services need to be strictly between those services.  The service that exposes itself to outside connections needs capabilities that typical Node web apps aren't allowed.
+
+Switching port numbers can sometimes cause issues with Vite.  When changing them, make sure to check what container port Vite ends up using by inspecting the container's logs and that `compose.yaml` correctly connects it to the expected host port.
 
 ## Vite troubles and their fixes
 
