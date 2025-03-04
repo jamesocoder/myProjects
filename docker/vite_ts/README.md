@@ -12,7 +12,7 @@ This project demonstrates how to set up both a frontend and backend project that
 ## Branch Goals
 
 - [x] Add code to [the backend](./back/src/main.ts) that prevents direct connections from unauthorized origins
-- [ ] Divide frontend's [app.jsx](./front/src/App.tsx) into components
+- [x] Divide frontend's [app.jsx](./front/src/App.tsx) into components
 - [ ] Reduce duplication of shared setups in [compose.yaml](./compose.yaml) with [extends](https://docs.docker.com/reference/compose-file/services/#extends) or [fragments](https://docs.docker.com/reference/compose-file/fragments/) 
 
 ## How to run
