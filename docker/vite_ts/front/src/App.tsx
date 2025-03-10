@@ -12,7 +12,7 @@ export default function App() {
   Vite's build process */
   useEffect(() => console.log(import.meta.env), []);
 
-  return (<>
+  return <>
     <Header swapLogo={swapLogo} />
     <Environment />
     <Secret />
@@ -20,5 +20,5 @@ export default function App() {
     <button onClick={() => setCount((count) => count + 1)}>
       count is {count}
     </button>
-  </>)
+  </>
 }
