@@ -114,6 +114,8 @@ This project demonstrates how to define "profile" tags to operate a select group
 - Copied values are only 1 level deep.  Any nested attributes like build:args:___ are not copied over
 - Fragments are also incapable of propagating anything not in the "mapping" yaml syntax `name: value`.  Attributes defined with the "sequence" syntax `- name: value` (anything preceded by a dash) are not copied over.
 
+If you are ever having trouble with a compose file, you can try debugging its final form with `docker compose [--profile ___ ] config`.  This will output the compiled yaml text to the terminal so you can see what attributes your service will be built with.  This can be helpful for checking if an attribute is properly inherited, overridden, or appended. 
+
 ## Understanding how environment variables are injected
 
 Docker is capable of injecting variable values at either build time or run time and when using Vite, it matters when it does so.  Vite hard-codes any `import.meta.env...` references we have in our code using the values we provide at *build* time.
