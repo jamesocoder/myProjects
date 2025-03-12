@@ -1,0 +1,53 @@
+# This file defines a common configuration for a Node container for the services
+# in the main compose file to extend
+# https://docs.docker.com/compose/how-tos/multiple-compose-files/extends
+# The base container configuration is defined separate from the main compose file
+# here because this base container would be treated as part of the project otherwise
+# (it would be built when it shouldn't be).
+# Note that depends_on is not inherited by any service that extends a base service.
+
+services:
+  # This service just defines common attributes for other
+  # services to inherit or overwrite where necessary
+  # https://docs.docker.com/reference/compose-file/fragments/
+  # Note that fragments utilize YAML merge which has limitations.
+  # It does not merge nested attributes or anything preceded by
+  # a dash "-"
+  node-base: &node-base
+    # Node's image maintainers advise using this premade user
+    # instead of the root user for security
+    user: node
+    # Node does not behave well when it is PID 0
+    # This property causes it to be PID 1
+    init: true
+    # The following two properties allow the container to be
+    # interacted with by keeping it running
+    stdin_open: true
+    tty: true
+
+  front-base:
+    <<: *node-base
+    ports:
+      - "8080:8080"
+    build:
+      context: ./front/
+      # Build-time environment variable arguments must be
+      # passed to the Dockerfile in the given context here
+      args:
+        VITE_HOST: 0.0.0.0
+        VITE_PORT: 8080
+        VITE_BACKEND: http://localhost:8081
+      # If we don't specify a build target, all stages in the
+      # Dockerfile will be executed, with the final stage
+      # being our resulting image
+      #target: dev-stage
+  
+  back-base:
+    <<: *node-base
+    build:
+      context: ./back/
+      args:
+        VITE_FRONTEND: http://localhost:8080
+    secrets:
+      - source: secrets1
+        target: /app/secrets

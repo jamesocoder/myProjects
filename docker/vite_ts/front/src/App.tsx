@@ -2,7 +2,7 @@ import './App.css'
 import { useEffect, useState } from 'react'
 import { Environment, Header, Instructions, Secret } from './components';
 // Change which logo is imported here to see Watch and HMR
-import { swapB as swapLogo } from './assets';
+import { swapA as swapLogo } from './assets';
 
 export default function App() {
   const [count, setCount] = useState(0);

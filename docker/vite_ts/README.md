@@ -14,7 +14,7 @@ This project demonstrates how to set up both a frontend and backend project that
 - [ ] Add code to [the backend](./back/src/main.ts) that prevents direct connections from unauthorized origins
     - Investigate [helmetjs](https://github.com/helmetjs/helmet) as a security option
 - [x] Divide frontend's [app.jsx](./front/src/App.tsx) into components
-- [ ] Reduce duplication of shared setups in [compose.yaml](./compose.yaml) with [extends](https://docs.docker.com/reference/compose-file/services/#extends) or [fragments](https://docs.docker.com/reference/compose-file/fragments/) 
+- [x] Reduce duplication of shared setups in [compose.yaml](./compose.yaml) with extends and fragments
 
 ## How to run
 
@@ -102,6 +102,17 @@ A major plugin for this project's backend, [vite-plugin-node](https://github.com
 Specifically named services can be run with a `docker compose <command> <service-name>` command.  If a service has any dependencies named in its `depends_on:` attribute, those services will be built even if they weren't named in the command.
 
 This project demonstrates how to define "profile" tags to operate a select group of services.
+
+## Using Docker compose.yaml extends and fragments to reduce code duplication
+
+**[extends](https://docs.docker.com/compose/how-tos/multiple-compose-files/extends) is a way for containers to utilize inheritance.**
+- "Parents" can be defined either in a [separate .yaml file](./common.yaml) or the [main compose.yaml file](./compose.yaml).  If defined in the main file, the parent service will be considered part of the compose project and built along with its children; this is typically unwanted behavior.
+- If a parent declares a secret for its children to mount, that secret source file must be declared in the main compose file.
+- Attributes can be overridden or added to the inherited config at any level.
+
+**[fragments](https://docs.docker.com/reference/compose-file/fragments/) utilize YAML merge to make shallow copies of attribute sets**
+- Copied values are only 1 level deep.  Any nested attributes like build:args:___ are not copied over
+- Fragments are also incapable of propagating anything not in the "mapping" yaml syntax `name: value`.  Attributes defined with the "sequence" syntax `- name: value` (anything preceded by a dash) are not copied over.
 
 ## Understanding how environment variables are injected
 
