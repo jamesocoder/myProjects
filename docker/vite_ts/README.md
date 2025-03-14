@@ -9,12 +9,11 @@ This project demonstrates how to set up both a frontend and backend project that
 - Future potential for scalability through Kubernetes
 - Potential for self-healing and self-coordinated systems through Docker compose
 
-## Branch Goals
+## Future Goals
 
 - [ ] Add code to [the backend](./back/src/main.ts) that prevents direct connections from unauthorized origins
     - Investigate [helmetjs](https://github.com/helmetjs/helmet) as a security option
-- [x] Divide frontend's [app.jsx](./front/src/App.tsx) into components
-- [x] Reduce duplication of shared setups in [compose.yaml](./compose.yaml) with extends and fragments
+- [ ] Investigate self-healing deployments with [health checks](https://docs.docker.com/reference/compose-file/services/#healthcheck) and [compose restart](https://docs.docker.com/reference/compose-file/services/#restart)
 
 ## How to run
 
