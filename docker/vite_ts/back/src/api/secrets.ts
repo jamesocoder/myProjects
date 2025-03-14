@@ -3,8 +3,9 @@ import { readFileSync } from "fs";
 
 export const routes = Router();
 
-// Use json parsing middleware to comprehend request bodies
-// https://expressjs.com/en/4x/api.html#express.json
+/* Use json parsing middleware to comprehend request bodies
+https://expressjs.com/en/api.html#express.json
+https://expressjs.com/en/api.html#req.body */
 routes.use(express.json());
 // Expects a POST request because GET requests do not support JSON bodies
 routes.post('/secret', (req, res, next) => {

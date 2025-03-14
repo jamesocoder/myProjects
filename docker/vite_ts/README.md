@@ -9,9 +9,11 @@ This project demonstrates how to set up both a frontend and backend project that
 - Future potential for scalability through Kubernetes
 - Potential for self-healing and self-coordinated systems through Docker compose
 
-**Potential Future Project Goals**
-- Divide frontend's [app.jsx](./front/src/App.tsx) into components
-- Reduce duplication of shared setups in [compose.yaml](./compose.yaml) with [extends](https://docs.docker.com/reference/compose-file/services/#extends) or [fragments](https://docs.docker.com/reference/compose-file/fragments/) 
+## Future Goals
+
+- [ ] Add code to [the backend](./back/src/main.ts) that prevents direct connections from unauthorized origins
+    - Investigate [helmetjs](https://github.com/helmetjs/helmet) as a security option
+- [ ] Investigate self-healing deployments with [health checks](https://docs.docker.com/reference/compose-file/services/#healthcheck) and [compose restart](https://docs.docker.com/reference/compose-file/services/#restart)
 
 ## How to run
 
@@ -24,7 +26,7 @@ This project demonstrates how to set up both a frontend and backend project that
         - `docker compose --profile prd up -d`
     - To use Vite locally without involving Docker:
         1. `yarn install` in both the ./front and ./back directories
-        2. `yarn dev` in one terminal for each for ./front and ./back
+        2. `yarn dev` in one terminal each for ./front and ./back
     - To build and serve the project locally:
         1. Install Node
         2. `yarn build` both ./front and ./back directories
@@ -42,10 +44,6 @@ This project demonstrates how to set up both a frontend and backend project that
 - `docker compose up dev-back -d`
     - You can alter the backend's source code and Vite and Docker will dynamically rebuild and re-host the changes when using this command.
     - Note that the container's Vite instance prints the port it's serving through from the *container's* perspective.  Pay attention to what host port is providing a connection to the container in the [compose.yaml](./compose.yaml) file.
-- `docker compose up prd-back -d`
-    - This will host a built backend using Node instead of Vite
-    - The image size difference isn't very large because we still need to include run-time dependencies in the final image
-    - Since the backend is so bloated, this may be a reason for some developer's preference for golang or rust
 
 **Then**, using something like Powershell or `curl` in a shell, respectively:
 
@@ -74,13 +72,15 @@ This will print "secretValue" to the terminal, which the backend reads from the 
 
 Secrets should't be mounted by Docker to the frontend.  A browser is incapable of accessing any files that aren't directly served to them.  Node's `fs` library is only usable by backend Node applications, not browser clients.
 
-This project demonstrates a possible solution for storing secrets in the application.  The frontend on `localhost:8080` has to retrieve secrets from the backend Node application, which [*can* read mounted files](./back/src/api/secrets.ts), by sending a request to `localhost:8081/secret`.  Not that these ports are the *host's* ports, not the container's ports.
+This project demonstrates a possible solution for storing secrets in the application.  The frontend on `localhost:8080` has to retrieve secrets from the backend Node application, which [*can* read mounted files](./back/src/api/secrets.ts), by sending a request to `localhost:8081/secret`.  Note that localhost and the ports referenced above are treated as the *host* and its ports, not the containers' ports.
 
 ## Networking issues
 
 The [compose.yaml network](https://docs.docker.com/reference/compose-file/networks/) feature isn't very useful for this application.  Docker networks are closed networks, but when we access the application from our browser, we're trying to connect from outside of that closed network and we end up blocked.  When requesting a secret in the browser, the frontend redirects the browser client's request to the backend, which is treated as a communication from outside of the closed network.  Because of this, both the frontend and the backend needs to be open to outside connections, meaning we need to specify ports for both of them.  We can't use Docker's `expose`.
 
-This means that the backend needs to have some sort of security measure to block unwanted requesters from its secrets.  The Express.js CORS middleware could be a part of this security solution.  With CORS, we'd only allow requests routed by the frontend to access the backend.
+This means that the backend needs to have some sort of security measure to block unwanted requesters from its secrets.  The Express.js CORS middleware could be a part of this security solution.  CORS only prevents access from an origin redirected by another node (client being redirected by browser) that isn't on the allowed origins list.  In a real deployment, the developer would need to disallow direct connections from any origin other than the frontend.
+
+This project's backend utilizes an [accessPolicy.ts](./back/src/accessPolicy.ts) that defines an Express middleware function that only allows requests that've been redirected by the frontend to the backend.  This tries to prevent direct access to the exposed backend port when the NODE_ENV is 'production'.
 
 To get a Docker network to work, the communications between services need to be strictly between those services.  The service that exposes itself to outside connections needs capabilities that typical Node web apps aren't allowed.
 
@@ -101,6 +101,19 @@ A major plugin for this project's backend, [vite-plugin-node](https://github.com
 Specifically named services can be run with a `docker compose <command> <service-name>` command.  If a service has any dependencies named in its `depends_on:` attribute, those services will be built even if they weren't named in the command.
 
 This project demonstrates how to define "profile" tags to operate a select group of services.
+
+## Using Docker compose.yaml extends and fragments to reduce code duplication
+
+**[extends](https://docs.docker.com/compose/how-tos/multiple-compose-files/extends) is a way for containers to utilize inheritance.**
+- "Parents" can be defined either in a [separate .yaml file](./common.yaml) or the [main compose.yaml file](./compose.yaml).  If defined in the main file, the parent service will be considered part of the compose project and built along with its children; this is typically unwanted behavior.
+- If a parent declares a secret for its children to mount, that secret source file must be declared in the main compose file.
+- Attributes can be overridden or added to the inherited config at any level.
+
+**[fragments](https://docs.docker.com/reference/compose-file/fragments/) utilize YAML merge to make shallow copies of attribute sets**
+- Copied values are only 1 level deep.  Any nested attributes like build:args:___ are not copied over
+- Fragments are also incapable of propagating anything not in the "mapping" yaml syntax `name: value`.  Attributes defined with the "sequence" syntax `- name: value` (anything preceded by a dash) are not copied over.
+
+If you are ever having trouble with a compose file, you can try debugging its final form with `docker compose [--profile ___ ] config`.  This will output the compiled yaml text to the terminal so you can see what attributes your service will be built with.  This can be helpful for checking if an attribute is properly inherited, overridden, or appended. 
 
 ## Understanding how environment variables are injected
 
