@@ -38,7 +38,7 @@ services:
       file: ./common.yaml
       service: front-base
     build:
-      # Override extend base service attribute
+      # Override extended base service attribute
       args:
         VITE_HOST: localhost
     # It is assumed that the final image in the Dockerfile
