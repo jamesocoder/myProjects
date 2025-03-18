@@ -24,6 +24,7 @@ services:
     # interacted with by keeping it running
     stdin_open: true
     tty: true
+    restart: on-failure:2
 
   front-base:
     <<: *node-base
@@ -44,10 +45,10 @@ services:
   
   back-base:
     <<: *node-base
+    secrets:
+      - source: secrets1
+        target: /app/secrets
     build:
       context: ./back/
       args:
         VITE_FRONTEND: http://localhost:8080
-    secrets:
-      - source: secrets1
-        target: /app/secrets

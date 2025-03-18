@@ -13,7 +13,8 @@ This project demonstrates how to set up both a frontend and backend project that
 
 - [ ] Add code to [the backend](./back/src/main.ts) that prevents direct connections from unauthorized origins
     - Investigate [helmetjs](https://github.com/helmetjs/helmet) as a security option
-- [ ] Investigate self-healing deployments with [health checks](https://docs.docker.com/reference/compose-file/services/#healthcheck) and [compose restart](https://docs.docker.com/reference/compose-file/services/#restart)
+- [ ] Investigate self-healing deployments with [health checks](https://docs.docker.com/reference/compose-file/services/#healthcheck)
+    - An container's inspect output has a "State" element that shows an ExitCode which may be helpful for diagnosing/testing/implementing health checks
 
 ## How to run
 
@@ -67,6 +68,12 @@ curl \
 ```
 
 This will print "secretValue" to the terminal, which the backend reads from the secrets file mounted by Docker compose.  Note that the Powershell commands will create variables that will persist in the terminal instance, `$headers` and `$response`.
+
+## Demonstrating Container Restarts On Failure
+
+[Compose restart](https://docs.docker.com/reference/compose-file/services/#restart) is used in [common.yaml services:node-base](./common.yaml) as `restart: on-failure:2` to cause the containers to attempt to start a container up to 3 times.  You can verify this by inspecting the container after it is built; there will be a "RestartPolicy" element present.  On initial successful startup, there will also be a "RestartCount" element whose value is 0.
+
+To test the Docker Daemon's restart response, you can simulate a failure by executing a kill command from within the container.  First, identify the main process of the container with either `ps` or `top` (exit the top linux program with 'q'), then kill it with `kill <pid>`.  You should see the container automatically restart and the "RestartCount" in docker inspect increment.  You can repeat this up to 3 times before the daemon stops restarting the container.
 
 ## Handling secrets
 
