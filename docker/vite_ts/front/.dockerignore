@@ -1,0 +1,8 @@
+# Ignore files that aren't necessary for building the app in the container
+# Source: https://docs.docker.com/build/concepts/context/#dockerignore-files
+node_modules
+.gitignore
+Dockerfile
+*.md
+.dockerignore
+compose.yaml
