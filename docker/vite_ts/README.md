@@ -13,8 +13,6 @@ This project demonstrates how to set up both a frontend and backend project that
 
 - [ ] Add code to [the backend](./back/src/main.ts) that prevents direct connections from unauthorized origins
     - Investigate [helmetjs](https://github.com/helmetjs/helmet) as a security option
-- [ ] Investigate self-healing deployments with [health checks](https://docs.docker.com/reference/compose-file/services/#healthcheck)
-    - An container's inspect output has a "State" element that shows an ExitCode which may be helpful for diagnosing/testing/implementing health checks
 
 ## How to run
 
@@ -73,7 +71,7 @@ This will print "secretValue" to the terminal, which the backend reads from the 
 
 [Compose restart](https://docs.docker.com/reference/compose-file/services/#restart) is used in [common.yaml services:node-base](./common.yaml) as `restart: on-failure:2` to cause the containers to attempt to start a container up to 3 times.  You can verify this by inspecting the container after it is built; there will be a "RestartPolicy" element present.  On initial successful startup, there will also be a "RestartCount" element whose value is 0.
 
-To test the Docker Daemon's restart response, you can simulate a failure by executing a kill command from within the container.  First, identify the main process of the container with either `ps` or `top` (exit the top linux program with 'q'), then kill it with `kill <pid>`.  You should see the container automatically restart and the "RestartCount" in docker inspect increment.  You can repeat this up to 3 times before the daemon stops restarting the container.
+To test the Docker Daemon's restart response, you can simulate a failure by executing a kill command from within the container.  First, identify the main process of the container with either `ps` or `top` (exit the top linux program with 'q' | [manual](https://man7.org/linux/man-pages/man1/top.1.html)), then kill it with `kill <pid>`.  You should see the container automatically restart and the "RestartCount" in docker inspect increment.  You can repeat this up to 3 times before the daemon stops restarting the container.
 
 ## Handling secrets
 
@@ -137,3 +135,22 @@ This project also demos how we can create lean Docker images by separating a Nod
 ![size comparison](./imgs/001.jpg)
 
 Comparing image sizes in the above image, we can see that the base image, node:alpine, is very slim.  The production image of the frontend is only ~10mb larger.  The backend's production image is almost half a gb larger than the base image.  We only save ~50mb between the backend's development and production builds.
+
+## Docker container health checks
+
+[Health checks](https://docs.docker.com/reference/compose-file/services/#healthcheck) are commands run on a container to check its status every interval.  These can be simple linux commands or entire test suites.  For instance, a dev could string multiple curl commands together in a [linux shell script](https://www.geeksforgeeks.org/sh-file-format/) to test all end points.  Docker's health check would then periodically run this script to check a container's responsiveness.  Failures don't stop a container, but they are reported in `docker inspect` or `docker ps` as being "unhealthy".  A maintainer could then see this status and investigate further to ensure their service is actually fully working.  In a real deployment, the interval should be much greater so as to not eat up processing power.
+
+Health checks rely on the exit codes of the commands it runs.  Anything other than exit code 0 is regarded as a failure.  It's important that we are aware of what exit code is issued by the scripts we use to check a container's health.  In linux, you can check the last exit code received by the shell with `echo $?`; in Powershell, you can use `$LASTEXITCODE`.
+
+Note how I explicitly chose to write the health check's test command in YAML's sequence syntax so that I can more easily break the curl command string up into multiple lines ([a YAML "block scalar"](https://yaml-multiline.info/)) for easier reading.  Credit for the syntax explanation goes to [this StackOverflow thread](https://stackoverflow.com/a/21699210/13084818).
+
+[curl's -f option](https://curl.se/docs/manpage.html#-f) is used in the test command to cause request failures to not print a full response body.
+
+### How to test health checks
+
+1. Use `docker compose up hc-back -d`
+2. Use docker inspect to view the `State.Health` element or user `docker ps` to see the container's health.
+3. Try demoing an "unhealthy" container by changing the test to always fail
+    - Add an extra character to the url argument so that we attempt to access the wrong endpoint
+    - After 10 seconds of startup grace time, the failures will begin counting towards an unhealthy status
+4. Clean up with `docker compose down hc-back --rmi all`

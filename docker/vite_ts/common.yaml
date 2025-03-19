@@ -51,4 +51,9 @@ services:
     build:
       context: ./back/
       args:
+        VITE_HOST: localhost
+        VITE_PORT: 8081
         VITE_FRONTEND: http://localhost:8080
+    # Backend is a Node Application, not a web page, so it
+    # must be served by Node, not http-server
+    command: ["node", "main.cjs"]

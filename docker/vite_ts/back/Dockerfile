@@ -30,3 +30,8 @@ FROM node:alpine AS server
 WORKDIR /app
 COPY --from=builder /app/dist /app/package.json /app/
 RUN yarn install --production=true
+
+FROM server AS server-hc
+# Add program needed for healthchecks
+RUN apk add curl
+WORKDIR /app
