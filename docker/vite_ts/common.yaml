@@ -24,6 +24,7 @@ services:
     # interacted with by keeping it running
     stdin_open: true
     tty: true
+    restart: on-failure:2
 
   front-base:
     <<: *node-base
@@ -44,10 +45,15 @@ services:
   
   back-base:
     <<: *node-base
-    build:
-      context: ./back/
-      args:
-        VITE_FRONTEND: http://localhost:8080
     secrets:
       - source: secrets1
         target: /app/secrets
+    build:
+      context: ./back/
+      args:
+        VITE_HOST: localhost
+        VITE_PORT: 8081
+        VITE_FRONTEND: http://localhost:8080
+    # Backend is a Node Application, not a web page, so it
+    # must be served by Node, not http-server
+    command: ["node", "main.cjs"]

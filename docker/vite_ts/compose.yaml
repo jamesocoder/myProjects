@@ -38,7 +38,7 @@ services:
       file: ./common.yaml
       service: front-base
     build:
-      # Override extend base service attribute
+      # Override extended base service attribute
       args:
         VITE_HOST: localhost
     # It is assumed that the final image in the Dockerfile
@@ -78,9 +78,28 @@ services:
     ports:
       - "8081:8081"
     build:
-      args:
-        VITE_HOST: localhost
-        VITE_PORT: 8081
-    # Backend is a Node Application, not a web page, so it
-    # must be served by Node, not http-server
-    command: ["node", "main.cjs"]
+      target: server
+
+  hc-back:
+    profiles:
+      - hc
+    extends:
+      file: ./common.yaml
+      service: back-base
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test:
+       - CMD-SHELL
+       - >-
+         curl -f
+         --url http://localhost:8081/secrets
+         --request POST
+         --header 'Content-Type: application/json'
+         --header 'Referer: http://localhost:8080'
+         --data "{\"name\": \"SECRET\"}"
+         || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 2
+      start_period: 10s
