@@ -11,6 +11,7 @@ This project demonstrates how to set up both a frontend and backend project that
 
 ## Future Goals
 
+- [ ] Practice deploying with Kubernetes
 - [ ] Add code to [the backend](./back/src/main.ts) that prevents direct connections from unauthorized origins
     - Investigate [helmetjs](https://github.com/helmetjs/helmet) as a security option
 
