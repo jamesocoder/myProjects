@@ -28,6 +28,7 @@ services:
 
   front-base:
     <<: *node-base
+    image: vite-demo-front
     ports:
       - "8080:8080"
     build:
@@ -45,6 +46,7 @@ services:
   
   back-base:
     <<: *node-base
+    image: vite-demo-back
     secrets:
       - source: secrets1
         target: /app/secrets
