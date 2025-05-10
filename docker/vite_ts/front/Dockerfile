@@ -15,17 +15,10 @@
 #  - https://github.com/nodejs/docker-node?tab=readme-ov-file#nodealpine
 #  - https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md
 FROM node:alpine AS dev-stage
+# Node's image maintainers advise using this pre-made user instead of the
+# default root user for security
+USER node
 WORKDIR /app
-# Vite and its dependencies don't play nice with default file permissions
-# on the node:alpine image.  Install them first, then make their permissions
-# global, then proceed with installing the other dependencies.  Yarn's
-# subsequent installations won't overwrite the file permissions of already-
-# installed node_modules.
-COPY vite.json .
-RUN mv vite.json package.json && \
-    yarn install --no-lockfile && \
-    rm package.json && \
-    chmod -R 777 ./node_modules
 COPY package.json .
 RUN yarn install
 COPY . .
@@ -40,20 +33,17 @@ ARG VITE_BACKEND
 ENV VITE_BACKEND=${VITE_BACKEND}
 
 FROM dev-stage AS builder
+USER node
 WORKDIR /app
 # Cause leaner production behaviors from the build tools
 ENV NODE_ENV=production
 RUN yarn build
-# For some reason "vite preview" requires even more dependency file
-# permissions than the ones given when installing Vite in the dev-stage.
-# The following RUN command gives blanket permissions to cover whatever
-# this extra dependency is but greatly slows down the build process.
-#RUN chmod -R 777 ./node_modules
 
 # Final stage prepares a global installation of http-server, then
 # copies only the minimized app files from the build stage to a
 # clean image for a lean final deployment image.
 FROM node:alpine AS server
-WORKDIR /app
 RUN yarn global add http-server
+USER node
+WORKDIR /app
 COPY --from=builder /app/dist .

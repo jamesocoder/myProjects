@@ -14,9 +14,6 @@ services:
   # It does not merge nested attributes or anything preceded by
   # a dash "-"
   node-base: &node-base
-    # Node's image maintainers advise using this premade user
-    # instead of the root user for security
-    user: node
     # Node does not behave well when it is PID 0
     # This property causes it to be PID 1
     init: true

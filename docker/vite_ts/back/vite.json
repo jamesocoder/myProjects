@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "vite": "^6.2.0",
-    "vite-plugin-node": "^4.0.0"
-  }
-}

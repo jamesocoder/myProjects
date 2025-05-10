@@ -14,6 +14,8 @@ This project demonstrates how to set up both a frontend and backend project that
 - [ ] Practice deploying with Kubernetes
 - [ ] Add code to [the backend](./back/src/main.ts) that prevents direct connections from unauthorized origins
     - Investigate [helmetjs](https://github.com/helmetjs/helmet) as a security option
+- [ ] Investigate mounting node_modules to a volume to share common dependencies among the different containers
+    - This has the potential to dramatically reduce the size of the dev containers by removing duplicate installations of shared dependencies
 
 ## How to run
 
@@ -94,7 +96,7 @@ Switching port numbers can sometimes cause issues with Vite.  When changing them
 
 ## Vite troubles and their fixes
 
-Vite doesn't seem to play well with this project's chosen environment (Node version, Docker base image, etc.) out of the box.  It can build just fine from within a container, but using any other command results in an error because Vite is restricted from accessing various packages in node_modules when it tries to run.  I've solved this issue of Vite not having enough permissions to launch itself in the container by changing the file permissions of it and all of its dependencies. (See the [Dockerfile](./front/Dockerfile)'s first `COPY` and `RUN` statements in its `dev-stage`).
+It is important to recognize when it is appropriate to switch USERs in the Dockerfiles.  The original implementation did not switch to the "node" user when building the project's images.  This caused filesystem access permission issues for Vite's functions.  So, in the Dockerfiles, when installing program files locally, first switch to the "node" user so that it receives ownership of all of the program's files.  In doing this, a new issue was unearthed: the non-root "node" user cannot be used to install packages globally.  It could be that it lacks the necessary OS permissions to do so, so the packages are never installed.  This can be solved by simply staying on the root user and installing global packages first, then switching to the non-root user for subsequent commands.
 
 `yarn dev` and `yarn preview` only work with a specific host value, `0.0.0.0`, in our chosen container environment (`node:alpine`).  It does not work with `localhost` as its value.  It could be because of the way recent versions of Node resolve domain names (see [vite.config server.host documentation](https://vite.dev/config/server-options.html#server-host)).
 
