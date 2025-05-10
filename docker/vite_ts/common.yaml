@@ -14,9 +14,6 @@ services:
   # It does not merge nested attributes or anything preceded by
   # a dash "-"
   node-base: &node-base
-    # Node's image maintainers advise using this premade user
-    # instead of the root user for security
-    user: node
     # Node does not behave well when it is PID 0
     # This property causes it to be PID 1
     init: true
@@ -28,6 +25,7 @@ services:
 
   front-base:
     <<: *node-base
+    image: vite-demo-front
     ports:
       - "8080:8080"
     build:
@@ -45,6 +43,7 @@ services:
   
   back-base:
     <<: *node-base
+    image: vite-demo-back
     secrets:
       - source: secrets1
         target: /app/secrets

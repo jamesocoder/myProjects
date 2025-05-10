@@ -4,10 +4,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --build && vite build",
+    "dev": "yarn vite",
+    "build": "tsc --build && yarn vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "yarn vite preview"
   },
   "dependencies": {
     "axios": "^1.8.1",

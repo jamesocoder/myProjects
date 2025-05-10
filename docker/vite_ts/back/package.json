@@ -16,8 +16,8 @@
     "vite-plugin-node": "^4.0.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build-strict": "tsc --build && vite build"
+    "dev": "yarn vite",
+    "build": "yarn vite build",
+    "build-strict": "tsc --build && yarn vite build"
   }
 }
